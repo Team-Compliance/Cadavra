@@ -425,3 +425,17 @@ mod:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, function(_, tear, coll
 		mod:Cadavrasboom(tear,true)
 	end
 end)
+
+if StageAPI and StageAPI.Loaded then
+	mod.StageAPIBosses = {
+		StageAPI.AddBossData("Cadavra", {
+			Name = "Cadavra",
+			Portrait = "gfx/ui/boss/portrait_cadavra.png",
+			Bossname = "gfx/ui/boss/bossname_cadavra.png",
+			Weight = 1,
+			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
+		})
+	}
+	
+	StageAPI.AddBossToBaseFloorPool({BossID = "Cadavra"}, LevelStage.STAGE4_1, StageType.STAGETYPE_REPENTANCE)
+end
