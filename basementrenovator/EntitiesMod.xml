@@ -1,7 +1,7 @@
 <data>
 <group Name="Corpse Bosses">
-    <entity ID="532" Image="Bossfolder/cadavra.png" Name="Cadavra" Subtype="0" Variant="0" />
-	<entity ID="532" Image="Bossfolder/fatbody.png" Name="Cadavra's fat body" Subtype="0" Variant="21" />
-	<entity ID="532" Image="Bossfolder/Skinnybody.png" Name="Cadavra's skinny body" Subtype="0" Variant="50" />
+    <entity ID="922" Image="Bossfolder/cadavra.png" Name="Cadavra" Subtype="0" Variant="0" />
+	<entity ID="922" Image="Bossfolder/fatbody.png" Name="Cadavra's fat body" Subtype="0" Variant="21" />
+	<entity ID="922" Image="Bossfolder/Skinnybody.png" Name="Cadavra's skinny body" Subtype="0" Variant="50" />
 </group>
 </data>

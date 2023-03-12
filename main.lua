@@ -93,9 +93,9 @@ function mod:CadavraAI(npc)
 	elseif data.state == "findbody" then
 		if sprite:IsPlaying("ApproachBody") then
 			if data.Choose == 1 then
-				local Bodycount = Isaac.FindByType(532, 21, -1, false, false)
+				local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, 21, -1, false, false)
 				if #Bodycount > 0 then
-					for i,entity in ipairs(Isaac.FindByType(532, 21, -1, false, false)) do
+					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 21, -1, false, false)) do
 						local entityData = entity:GetData()
 						if entityData.state == "nohost" then
 							body = entity
@@ -111,9 +111,9 @@ function mod:CadavraAI(npc)
 				end
 			end
 			if data.Choose == 2 then
-				local Bodycount2 = Isaac.FindByType(532, 50, -1, false, false)
+				local Bodycount2 = Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)
 				if #Bodycount2 > 0 then
-					for i,entity in ipairs(Isaac.FindByType(532, 50, -1, false, false)) do
+					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)) do
 						local entityData = entity:GetData()
 						if entityData.state == "nohost" then
 							body = entity
@@ -129,8 +129,8 @@ function mod:CadavraAI(npc)
 				end
 			end
 			--[[if data.Choose == 2 then
-				for i,entity in ipairs(Isaac.FindByType(532, 50, -1, false, false)) do
-					local Bodycount = Isaac.FindByType(532, 50, -1, false, false)
+				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)) do
+					local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)
 					if #Bodycount > 0 then
 						local entityData = entity:GetData()
 							if entityData.state == "nohost" then
@@ -210,7 +210,7 @@ function mod:CadavraAI(npc)
 	end
 end
 
-mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavraAI, 532)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavraAI, EntityType.ENTITY_CADAVRA)
 
 
 function mod:CadavrasChubbyBodyAI(npc)
@@ -271,7 +271,7 @@ function mod:CadavrasChubbyBodyAI(npc)
 	
 	
 	if npc:IsDead() then
-		for i,entity in ipairs(Isaac.FindByType(532, 0, -1, false, false)) do
+		for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 0, -1, false, false)) do
 			local entityData = entity:GetData()
 			entityData.state = "Escape"
 			entityData.Pos1 = npc.Position
@@ -281,7 +281,7 @@ function mod:CadavrasChubbyBodyAI(npc)
 end
 
 
-mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasChubbyBodyAI, 532)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasChubbyBodyAI, EntityType.ENTITY_CADAVRA)
 
 function mod:CadavrasNibbyBodyAI(npc)
 	if npc.Variant ~= 50 then
@@ -356,7 +356,7 @@ function mod:CadavrasNibbyBodyAI(npc)
 	end
 	
 	if npc:IsDead() then
-		for i,entity in ipairs(Isaac.FindByType(532, 0, -1, false, false)) do
+		for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 0, -1, false, false)) do
 			local entityData = entity:GetData()
 			entityData.state = "Escape"
 			entityData.Pos1 = npc.Position
@@ -364,7 +364,7 @@ function mod:CadavrasNibbyBodyAI(npc)
 		end
 	end
 end
-mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibbyBodyAI, 532)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibbyBodyAI, EntityType.ENTITY_CADAVRA)
 
 function mod:Cadavrasboom(tear,collided)
     local d = tear:GetData()
@@ -389,7 +389,7 @@ function mod:Cadavrasboom(tear,collided)
     explode:GetSprite().Color = boomColor
 	    
 	for i, entity in ipairs(Isaac.FindInRadius(tear.Position, 60)) do
-	    if entity.Type ~= EntityType.ENTITY_PLAYER and entity.Type ~= 532 then
+	    if entity.Type ~= EntityType.ENTITY_PLAYER and entity.Type ~= EntityType.ENTITY_CADAVRA then
 				entity:TakeDamage(2, DamageFlag.DAMAGE_EXPLOSION, EntityRef(tear), 0)
 		end
 	end
