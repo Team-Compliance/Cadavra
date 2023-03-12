@@ -1,4 +1,4 @@
-local Mod = RegisterMod("Cadavra", 1)
+local mod = RegisterMod("Cadavra", 1)
 local game = Game()
 local sound = SFXManager()
 local rng = RNG()
@@ -8,7 +8,7 @@ local function Lerp(v1, v2, t)
 	return (v1 + (v2 - v1)*t)
 end
  
-function Mod:CadavraAI(npc)
+function mod:CadavraAI(npc)
     if npc.Variant ~= 0 then
 		return
 	end
@@ -210,10 +210,10 @@ function Mod:CadavraAI(npc)
 	end
 end
 
-Mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, Mod.CadavraAI, 532)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavraAI, 532)
 
 
-function Mod:CadavrasChubbyBodyAI(npc)
+function mod:CadavrasChubbyBodyAI(npc)
 	if npc.Variant ~= 21 then
 		return
 	end
@@ -281,9 +281,9 @@ function Mod:CadavrasChubbyBodyAI(npc)
 end
 
 
-Mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, Mod.CadavrasChubbyBodyAI, 532)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasChubbyBodyAI, 532)
 
-function Mod:CadavrasNibbyBodyAI(npc)
+function mod:CadavrasNibbyBodyAI(npc)
 	if npc.Variant ~= 50 then
 		return
 	end
@@ -364,7 +364,7 @@ function Mod:CadavrasNibbyBodyAI(npc)
 		end
 	end
 end
-Mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, Mod.CadavrasNibbyBodyAI, 532)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibbyBodyAI, 532)
 
 function mod:Cadavrasboom(tear,collided)
     local d = tear:GetData()
