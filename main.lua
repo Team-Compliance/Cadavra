@@ -284,17 +284,13 @@ function mod:CadavrasChubbyBodyAI(npc)
 				angle = (player.Position - npc.Position):GetAngleDegrees()
 				for i = 1,math.random(7,12) do
 				local params = ProjectileParams()
-				data.tearColor2 = Color(1,1,1,1)
-				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
-				
-				params.Color = data.tearColor2
 				params.Variant = 0
 				params.FallingSpeedModifier = -math.random(8,35) * 0.4
 				params.FallingAccelModifier = 0.3
 				npc:FireProjectiles(npc.Position, Vector.FromAngle(angle+math.random(1,360)):Resized(math.random(4,7)), 0, params)
 				end
-				for i = 1, 4 do
-					local direction = math.random(1,360)
+				for i = 1, 6 do
+					local direction = (i*(360/6)) + math.random(-10,10)
 					local wave = Isaac.Spawn(1000, 72, 2, npc.Position + Vector.FromAngle(direction) * 10, Vector.Zero, npc):ToEffect()
 					wave.Parent = npc
 					wave.Rotation = direction
