@@ -838,7 +838,7 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="3" AtFrame="21"/>
+				<Trigger EventId="3" AtFrame="16"/>
 				<Trigger EventId="0" AtFrame="40"/>
 			</Triggers>
 		</Animation>
