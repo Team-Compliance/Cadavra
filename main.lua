@@ -165,6 +165,7 @@ function mod:CadavraAI(npc)
 					data.state = "Inside man"
 					return
 				else
+					body.Parent = npc
 					Bodydata.Doactivate = true
 				end
 			elseif data.Choose == 2 then
@@ -177,6 +178,7 @@ function mod:CadavraAI(npc)
 					data.state = "Inside man"
 					return
 				else
+					body.Parent = npc
 					Bodydata.Doactivate = true
 				end
 			end
@@ -305,12 +307,10 @@ function mod:CadavrasChubbyBodyAI(npc)
 	end 
 	
 	if npc:IsDead() then
-		for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 0, -1, false, false)) do
-			local entityData = entity:GetData()
+			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
 			entityData.Pos1 = npc.Position
-			entity:GetSprite():Play("outofbody", true)
-		end
+			npc.Parent:GetSprite():Play("outofbody", true)
 	end
 end
 
@@ -390,12 +390,10 @@ function mod:CadavrasNibbyBodyAI(npc)
 	end
 	
 	if npc:IsDead() then
-		for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 0, -1, false, false)) do
-			local entityData = entity:GetData()
+			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
 			entityData.Pos1 = npc.Position
-			entity:GetSprite():Play("outofbody", true)
-		end
+			npc.Parent:GetSprite():Play("outofbody", true)
 	end
 end
 mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibbyBodyAI, EntityType.ENTITY_CADAVRA)
