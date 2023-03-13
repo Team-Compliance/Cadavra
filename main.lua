@@ -60,15 +60,15 @@ function mod:CadavraAI(npc)
 			if sprite:IsEventTriggered("Shoot") then
 		        npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
 			    npc:PlaySound(SoundEffect.SOUND_MONSTER_GRUNT_0,1,0,false,1)
-			    local vector = (player.Position-npc.Position)*0.1
+			    local vector = (player.Position-npc.Position)*0.056
 			    local tear = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_NORMAL, 0, npc.Position, vector, npc):ToProjectile();
 			    data.tearColor2 = Color(1,1,1,1)
 				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
 				
 				tear:GetSprite().Color = data.tearColor2
-    			tear.Scale = 2
-			    tear.FallingSpeed = -25;
-			    tear.FallingAccel = 4;
+    				tear.Scale = 2
+			    	tear.FallingSpeed = -30;
+				tear.FallingAccel = 2;
 			    tear:GetData().cadBoom = true
 			    tear:GetData().cadBoomTears = true
 			    tear:GetData().cadGasLife = 325/2
