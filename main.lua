@@ -280,7 +280,12 @@ function mod:CadavrasChubbyBodyAI(npc)
 	
 	elseif data.state == "Attack1" then
 		if sprite:IsPlaying("Chubs jump") then
-			if sprite:IsEventTriggered("Shoot") then
+			if sprite:IsEventTriggered("Jump") then
+			npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+			npc.Velocity = (player.Position-npc.Position)*0.056
+			elseif sprite:IsEventTriggered("Shoot") then
+				npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+				npc.Velocity = Vector.Zero
 				angle = (player.Position - npc.Position):GetAngleDegrees()
 				for i = 1,math.random(7,12) do
 				local params = ProjectileParams()
