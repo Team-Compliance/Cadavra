@@ -7,6 +7,7 @@ local rng = RNG()
 local function Lerp(v1, v2, t)
 	return (v1 + (v2 - v1)*t)
 end
+
  
 function mod:CadavraAI(npc)
     if npc.Variant ~= 0 then
@@ -239,7 +240,7 @@ function mod:CadavrasChubbyBodyAI(npc)
 		
 		sprite:Play("Chubs_Enter", true)
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-		
+		data.last = 0
 		if npc.HitPoints <= 5 then
 			npc.HitPoints = 200 + npc.HitPoints
 		end
@@ -266,9 +267,42 @@ function mod:CadavrasChubbyBodyAI(npc)
 		else 
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Normalized() * 0.3 * 6
 		end
+		
+		if 15 < npc.FrameCount and math.random(30) == math.random(30) then
+				data.state = "Attack1"
+				sprite:Play("Chubs jump", true)
+				npc.Velocity = Vector.Zero
+				
+		end
 	
-	end
 	
+	elseif data.state == "Attack1" then
+		if sprite:IsPlaying("Chubs jump") then
+			if sprite:IsEventTriggered("Shoot") then
+				angle = (player.Position - npc.Position):GetAngleDegrees()
+				for i = 1,math.random(7,12) do
+				local params = ProjectileParams()
+				data.tearColor2 = Color(1,1,1,1)
+				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
+				
+				params.Color = data.tearColor2
+				params.Variant = 0
+				params.FallingSpeedModifier = -math.random(8,35) * 0.4
+				params.FallingAccelModifier = 0.3
+				npc:FireProjectiles(npc.Position, Vector.FromAngle(angle+math.random(1,360)):Resized(math.random(4,7)), 0, params)
+				end
+				for i = 1, 4 do
+					local direction = math.random(1,360)
+					local wave = Isaac.Spawn(1000, 72, 2, npc.Position + Vector.FromAngle(direction) * 10, Vector.Zero, npc):ToEffect()
+					wave.Parent = npc
+					wave.Rotation = direction
+				end
+			end
+		elseif sprite:IsFinished("Chubs jump") then
+		data.state = "Walk"
+		data.last = npc.FrameCount
+		end
+	end 
 	
 	if npc:IsDead() then
 		for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 0, -1, false, false)) do
