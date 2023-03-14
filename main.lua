@@ -4,8 +4,8 @@ local sound = SFXManager()
 local rng = RNG()
 
 local CADAVRA_HEAD = Isaac.GetEntityVariantByName("Cadavra")
-local CHUBS = Isaac.GetEntityVariantByName("Cadavra Chubs")
-local NIBS = Isaac.GetEntityVariantByName("Cadavra Nibs")
+local CHUBS = Isaac.GetEntityVariantByName("Chubs (Cadavra)")
+local NIBS = Isaac.GetEntityVariantByName("Nibs (Cadavra)")
 
 
 local function Lerp(v1, v2, t)
@@ -94,9 +94,9 @@ function mod:CadavraAI(npc)
 	elseif data.state == "findbody" then
 		if sprite:IsPlaying("ApproachBody") then
 			if data.Choose == 1 then
-				local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, 21, -1, false, false)
+				local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
 				if #Bodycount > 0 then
-					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 21, -1, false, false)) do
+					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)) do
 						local entityData = entity:GetData()
 						if entityData.state == "nohost" then
 							body = entity
@@ -112,9 +112,9 @@ function mod:CadavraAI(npc)
 				end
 			end
 			if data.Choose == 2 then
-				local Bodycount2 = Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)
+				local Bodycount2 = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
 				if #Bodycount2 > 0 then
-					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)) do
+					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
 						local entityData = entity:GetData()
 						if entityData.state == "nohost" then
 							body = entity
@@ -130,8 +130,8 @@ function mod:CadavraAI(npc)
 				end
 			end
 			--[[if data.Choose == 2 then
-				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)) do
-					local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, 50, -1, false, false)
+				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
+					local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
 					if #Bodycount > 0 then
 						local entityData = entity:GetData()
 							if entityData.state == "nohost" then

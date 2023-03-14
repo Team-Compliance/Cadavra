@@ -3,10 +3,10 @@
 		<bestiary transform="0,0,1" anim="headbangin" />
         <gibs amount="7" blood="1" bone="0" eye="1" gut="1" large="0" />
     </entity>
-<entity anm2path="bosses\922.000_cadavraworking.anm2" baseHP="570" boss="0" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" id="922" name="Cadavra Chubs" numGridCollisionPoints="4" shadowSize="30" stageHP="0" variant="1" portrait="22">
+<entity anm2path="bosses\922.000_cadavraworking.anm2" baseHP="570" boss="0" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" id="922" name="Chubs (Cadavra)" numGridCollisionPoints="4" shadowSize="30" stageHP="0" variant="1" portrait="22">
         <gibs amount="7" blood="1" bone="0" eye="1" gut="1" large="0" />
     </entity>
-<entity anm2path="bosses\922.000_cadavraworking.anm2" baseHP="360" boss="0" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" id="922" name="Cadavra Nibs" numGridCollisionPoints="4" shadowSize="20" stageHP="0" variant="2" portrait="22">
+<entity anm2path="bosses\922.000_cadavraworking.anm2" baseHP="360" boss="0" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" id="922" name="Nibs (Cadavra)" numGridCollisionPoints="4" shadowSize="20" stageHP="0" variant="2" portrait="22">
         <gibs amount="7" blood="1" bone="0" eye="1" gut="1" large="0" />
     </entity>
 </entities>
