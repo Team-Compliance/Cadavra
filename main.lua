@@ -216,7 +216,7 @@ end
 mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavraAI, EntityType.ENTITY_CADAVRA)
 
 
-function mod:CadavrasChubbyBodyAI(npc)
+function mod:CadavrasChubsBodyAI(npc)
 	if npc.Variant ~= CHUBS then
 		return
 	end
@@ -319,9 +319,9 @@ function mod:CadavrasChubbyBodyAI(npc)
 end
 
 
-mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasChubbyBodyAI, EntityType.ENTITY_CADAVRA)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasChubsBodyAI, EntityType.ENTITY_CADAVRA)
 
-function mod:CadavrasNibbyBodyAI(npc)
+function mod:CadavrasNibsBodyAI(npc)
 	if npc.Variant ~= NIBS then
 		return
 	end
@@ -401,7 +401,7 @@ function mod:CadavrasNibbyBodyAI(npc)
 			npc.Parent:GetSprite():Play("BodyDestroyed", true)
 	end
 end
-mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibbyBodyAI, EntityType.ENTITY_CADAVRA)
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibsBodyAI, EntityType.ENTITY_CADAVRA)
 
 function mod:Cadavrasboom(tear,collided)
     local d = tear:GetData()
