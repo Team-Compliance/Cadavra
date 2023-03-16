@@ -48,9 +48,9 @@ function mod:CadavraAI(npc)
 		
 		if sprite:IsPlaying("Idle") then
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
-			if data.last + 60 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+			if data.last + 30 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				sprite:Play("Head_Shoot", true)
-			elseif data.last + 130 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+			elseif data.last + 60 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				sprite:Play("Head_Shoot_Big", true)
 			end
 		end
@@ -279,11 +279,11 @@ function mod:CadavrasChubsBodyAI(npc)
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Normalized() * 0.3 * 6
 		end
 		
-		if 15 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+		if 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				data.state = "Attack1"
 				sprite:Play("Chubs_Jump_Big", true)
 				npc.Velocity = Vector.Zero
-		elseif 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+		elseif 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				data.repeatjump = 0
 				sprite:Play("Chubs_JumpCue", true)
 				npc.Velocity = Vector.Zero
