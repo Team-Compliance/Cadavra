@@ -48,9 +48,9 @@ function mod:CadavraAI(npc)
 		
 		if sprite:IsPlaying("Idle") then
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
-			if data.last + 15 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+			if data.last + 60 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				sprite:Play("Head_Shoot", true)
-			elseif data.last + 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+			elseif data.last + 130 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				sprite:Play("Head_Shoot_Big", true)
 			end
 		end
