@@ -283,6 +283,11 @@ function mod:CadavrasChubsBodyAI(npc)
 				data.state = "Attack1"
 				sprite:Play("Chubs_Jump_Big", true)
 				npc.Velocity = Vector.Zero
+		elseif 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+				data.repeatjump = 0
+				sprite:Play("Chubs_JumpCue", true)
+				npc.Velocity = Vector.Zero
+				data.state = "Attack2"
 				
 		end
 	
@@ -314,6 +319,43 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.state = "Walk"
 		data.last = npc.FrameCount
 		end
+	elseif data.state == "Attack2" then
+		sprite.FlipX = false
+		if sprite:IsFinished("Chubs_JumpCue") then
+			local angle = (player.Position - npc.Position):GetAngleDegrees()
+			if angle >= -45 and angle <= 45 then
+				sprite:Play("Chubs_JumpRight", true)
+			elseif angle >= 45 and angle <= 135 then
+				sprite:Play("Chubs_JumpDown", true)
+			elseif angle >= 135 and (angle <= 275 or angle <= -135) then
+				sprite:Play("Chubs_JumpLeft", true)
+			elseif angle >= -135 and angle <= -45 then
+				sprite:Play("Chubs_JumpUp", true)
+			end
+		end
+		if sprite:IsPlaying("Chubs_JumpRight") or sprite:IsPlaying("Chubs_JumpUp") or sprite:IsPlaying("Chubs_JumpLeft") or sprite:IsPlaying("Chubs_JumpDown") then
+			if sprite:IsEventTriggered("Jump") then
+				npc.Velocity = (player.Position-npc.Position) * 0.05
+			elseif sprite:IsEventTriggered("Shoot") then
+				for _ = 1,(rng:RandomInt(2)+4) do
+					local params = ProjectileParams()
+					params.Variant = 0
+					params.FallingSpeedModifier = -(rng:RandomInt(27) + 8) * 0.4
+					params.FallingAccelModifier = 0.3
+					npc:FireProjectiles(npc.Position, Vector.FromAngle(angle+(rng:RandomInt(359)+1)):Resized((rng:RandomInt(3) + 4)), 0, params)
+				end
+				npc.Velocity = Vector.Zero
+			end
+		elseif sprite:IsFinished("Chubs_JumpRight") or sprite:IsFinished("Chubs_JumpUp") or sprite:IsFinished("Chubs_JumpLeft") or sprite:IsFinished("Chubs_JumpDown") then
+				if data.repeatjump <= 1 then
+					data.repeatjump = data.repeatjump + 1
+					sprite:Play("Chubs_JumpCue", true)
+				else
+					data.state = "Walk"
+					data.last = npc.FrameCount
+				end
+		end
+	
 	end 
 	
 	if npc:IsDead() then
