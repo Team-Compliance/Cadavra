@@ -56,7 +56,13 @@ function mod:CadavraAI(npc)
 		end
 		if sprite:IsPlaying("Head_Shoot") then
 		npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(1.25)
-			 
+			if sprite:IsEventTriggered("Shoot") then 
+			sfx:Play(SoundEffect.SOUND_MEATHEADSHOOT, 0.6, 0, false, math.random(9,11)/10)
+			local vector = (player.Position-npc.Position)*0.056
+			local params = ProjectileParams()
+			params.Variant = 0
+			npc:FireProjectiles(npc.Position, vector, 3, params)
+			end	 
 		end
 		
 		if sprite:IsPlaying("Head_Shoot_Big") then
@@ -282,7 +288,7 @@ function mod:CadavrasChubsBodyAI(npc)
 	
 	
 	elseif data.state == "Attack1" then
-		if sprite:IsPlaying("Chubs_BigJump") then
+		if sprite:IsPlaying("Chubs_Jump_Big") then
 			if sprite:IsEventTriggered("Jump") then
 			npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 			npc.Velocity = (player.Position-npc.Position)*0.056
