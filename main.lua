@@ -79,7 +79,7 @@ function mod:CadavraAI(npc)
 				tear:GetSprite().Color = data.tearColor2
     				tear.Scale = 2
 			    	tear.FallingSpeed = -26;
-				tear.FallingAccel = 4;
+				tear.FallingAccel = 2;
 			    tear:GetData().cadBoom = true
 			    tear:GetData().cadBoomTears = true
 			    tear:GetData().cadGasLife = 325/2
