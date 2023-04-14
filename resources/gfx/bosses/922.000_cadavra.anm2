@@ -497,8 +497,8 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="0" AtFrame="1"/>
-				<Trigger EventId="1" AtFrame="13"/>
+				<Trigger EventId="1" AtFrame="1"/>
+				<Trigger EventId="0" AtFrame="13"/>
 			</Triggers>
 		</Animation>
 		<Animation Name="Head_Shoot_Big" FrameNum="52" Loop="false">
@@ -553,8 +553,8 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="1" AtFrame="1"/>
-				<Trigger EventId="0" AtFrame="11"/>
+				<Trigger EventId="0" AtFrame="1"/>
+				<Trigger EventId="1" AtFrame="11"/>
 			</Triggers>
 		</Animation>
 		<Animation Name="Appear" FrameNum="27" Loop="false">
