@@ -437,6 +437,11 @@ function mod:CadavrasNibsBodyAI(npc)
 	elseif data.state == "Attack1" then
 	if sprite:IsPlaying("Nibs_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
+		data.clusterParams = ProjectileParams()
+		data.clusterParams.FallingAccelModifier = -0.1
+		data.ColorWigglyMaggot = Color(1,1,1,1,0,0,0)
+		data.ColorWigglyMaggot:SetColorize(4,3,3,1)
+		data.clusterParams.Color = data.ColorWigglyMaggot
 		mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
 		end
 	elseif sprite:IsFinished("Nibs_Shoot") then
