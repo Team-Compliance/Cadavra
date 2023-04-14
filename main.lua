@@ -6,6 +6,7 @@ local rng = RNG()
 local CADAVRA_HEAD = Isaac.GetEntityVariantByName("Cadavra")
 local CHUBS = Isaac.GetEntityVariantByName("Chubs (Cadavra)")
 local NIBS = Isaac.GetEntityVariantByName("Nibs (Cadavra)")
+mod.GatheredProjectilesCad = {}
 
 
 local function Lerp(v1, v2, t)
@@ -58,7 +59,7 @@ function mod:CadavraAI(npc)
 		npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(1.25)
 			if sprite:IsEventTriggered("Shoot") then 
 			sfx:Play(SoundEffect.SOUND_MEATHEADSHOOT, 0.6, 0, false, math.random(9,11)/10)
-			local vector = (player.Position-npc.Position)*0.056
+			local vector = (player.Position-npc.Position):Resized(13)
 			local params = ProjectileParams()
 			params.Variant = 0
 			npc:FireProjectiles(npc.Position, vector, 3, params)
@@ -77,8 +78,8 @@ function mod:CadavraAI(npc)
 				
 				tear:GetSprite().Color = data.tearColor2
     				tear.Scale = 2
-			    	tear.FallingSpeed = -30;
-				tear.FallingAccel = 2;
+			    	tear.FallingSpeed = -26;
+				tear.FallingAccel = 4;
 			    tear:GetData().cadBoom = true
 			    tear:GetData().cadBoomTears = true
 			    tear:GetData().cadGasLife = 325/2
@@ -435,6 +436,9 @@ function mod:CadavrasNibsBodyAI(npc)
 		
 	elseif data.state == "Attack1" then
 	if sprite:IsPlaying("Nibs_Shoot") then
+		if sprite:IsEventTriggered("Shoot") then
+		mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
+		end
 	elseif sprite:IsFinished("Nibs_Shoot") then
 		data.state = "Walk"
 		data.last = npc.FrameCount
@@ -523,4 +527,143 @@ if StageAPI and StageAPI.Loaded then
 	}
 	
 	StageAPI.AddBossToBaseFloorPool({BossID = "Cadavra"}, LevelStage.STAGE4_1, StageType.STAGETYPE_REPENTANCE)
+end
+
+
+function mod:DummyEffectInitCad(effect)
+    effect.Visible = false
+
+end
+
+mod:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, mod.DummyEffectInitCad, 451)
+
+function mod:DummyEffectAICad(effect, sprite, data)
+    local room = game:GetRoom()
+	
+    if effect:GetData().corpseClusters then
+        --[[if effect.FrameCount % 3 == 0 then
+            local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HAEMO_TRAIL, 0, effect.Position, effect.Velocity:Resized(-5), effect):ToEffect()
+            trail.SpriteOffset = Vector(0, -25)
+            trail.DepthOffset = -15
+            trail.Color = mod.ColorRedPoop
+            trail:Update()
+        end]]
+        if room:GetGridCollisionAtPos(effect.Position) >= GridCollisionClass.COLLISION_SOLID then
+            for _, projectile in pairs(effect:GetData().corpseClusters) do
+                projectile.Velocity = effect.Velocity:Rotated(180 + mod:RandomInt(-60,60))
+                projectile:GetData().projType = nil
+                projectile:ClearProjectileFlags(ProjectileFlags.NO_WALL_COLLIDE)
+            end
+            sfx:Play(SoundEffect.SOUND_DEATH_BURST_SMALL)
+            --[[local cloud = Isaac.Spawn(1000,16,5,effect.Position,Vector.Zero,effect)
+            cloud.Color = mod.ColorRedPoop
+            cloud.SpriteScale = Vector(0.7,0.7)]]
+            effect:Remove()
+        end
+    elseif data.afterImage then
+        if effect.FrameCount > 10 then
+            effect:Remove()
+        end
+    end
+end
+
+mod:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, mod.DummyEffectAICad, 451)
+
+function mod:CadsProjectileUpdate(projectile, sprite, data)
+	local projType = data.projType
+	if projType == "corpseClusterCad" then
+        mod:CorpseClusterProjectileCad(projectile, data)
+	end
+end
+
+mod:AddCallback(ModCallbacks.MC_POST_PROJECTILE_UPDATE, function(_, projectile)
+    local data = projectile:GetData()
+    local sprite = projectile:GetSprite()
+    mod:CadsProjectileUpdate(projectile, sprite, data)
+    --mod:PrintColor(projectile.Color)
+    --print(projectile.Variant)
+end)
+
+function mod:CorpseClusterProjectileCad(projectile, data)
+    data.Angle = mod:RandomAngle()
+    projectile.TargetPosition = projectile.Parent.Position + Vector.One:Resized(mod:RandomInt(30,40)):Rotated(data.Angle)
+    local vec = projectile.TargetPosition - projectile.Position
+    vec = vec:Resized(math.min(40, vec:Length()))
+    projectile.Velocity = Lerp(projectile.Velocity, vec, 0.02)
+end
+
+function mod:RandomAngle(customRNG)
+    local rand = customRNG or rng
+    return mod:RandomInt(0,359,rand)
+end
+
+function mod:RandomInt(min, max, customRNG)
+    local rand = customRNG or rng
+    if not max then
+        max = min
+        min = 0
+    end  
+    if min > max then 
+        local temp = min
+        min = max
+        max = temp
+    end
+    return min + (rand:RandomInt(max - min + 1))
+end
+
+function mod:QuickCord(parent, child, anm2)
+    local cord = Isaac.Spawn(EntityType.ENTITY_EVIS, 10, 0, parent.Position, Vector.Zero, parent):ToNPC()
+    cord.Parent = parent
+    cord.Target = child
+    parent.Child = cord
+    cord.DepthOffset = child.DepthOffset - 150
+    
+    if anm2 then
+        cord:GetSprite():Load("gfx/bosses/" .. anm2 .. ".anm2", true)
+    end
+    
+    return cord
+end
+
+mod:AddCallback(ModCallbacks.MC_POST_PROJECTILE_INIT, function(_, projectile)
+    local data = projectile:GetData()
+    if mod.GatheringProjectilesCad then
+        table.insert(mod.GatheredProjectilesCad, projectile)
+    end
+end)
+
+function mod:SetGatheredProjectilesCad()
+    mod.GatheredProjectilesCad = {}
+    mod.GatheringProjectilesCad = true
+end
+
+function mod:GetGatheredProjectilesCad()
+    mod.GatheringProjectilesCad = false
+    return mod.GatheredProjectilesCad
+end
+
+function mod.FireClusterProjectilesCad(npc, velocity, numProjectiles, params)
+	local corpseClusterParentCad = Isaac.Spawn(1000, 451, 10, npc.Position, velocity, npc)
+	
+	
+	local params = params or ProjectileParams()
+	params.FallingAccelModifier = -0.1
+	params.BulletFlags = ProjectileFlags.NO_WALL_COLLIDE
+
+	mod:SetGatheredProjectilesCad()
+	
+
+	for i = 1, numProjectiles or 12 do
+		npc:FireProjectiles(npc.Position, velocity, 0, params)
+	end
+
+	local projectiles = mod:GetGatheredProjectilesCad()
+	for i, projectile in pairs(projectiles) do
+		projectile:GetData().projType = "corpseClusterCad"
+		projectile.Parent = corpseClusterParentCad
+		projectile.Scale = projectile.Scale * (8 + math.random() * 8) / 10
+	end
+	
+	corpseClusterParentCad:GetData().corpseClusters = projectiles
+	return projectiles, corpseClusterParentCad
 end
