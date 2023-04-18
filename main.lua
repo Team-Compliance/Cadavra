@@ -510,7 +510,7 @@ function mod:CadavrasNibsBodyAI(npc)
 				
 			else
 			
-			npc.Velocity = (cordEnd2.Position - npc.Position):Resized(10)
+			npc:AddVelocity((cordEnd2.Position - npc.Position):Resized(1))
 			end
 		end
 	end
