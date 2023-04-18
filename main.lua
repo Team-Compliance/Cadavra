@@ -6,8 +6,24 @@ local rng = RNG()
 local CADAVRA_HEAD = Isaac.GetEntityVariantByName("Cadavra")
 local CHUBS = Isaac.GetEntityVariantByName("Chubs (Cadavra)")
 local NIBS = Isaac.GetEntityVariantByName("Nibs (Cadavra)")
+local CORD = Isaac.GetEntityVariantByName("Cadavra (Cord)")
 mod.GatheredProjectilesCad = {}
 
+
+function mod:QuickCordCad(parent, child, anm2)
+	local cord = Isaac.Spawn(EntityType.ENTITY_EVIS, 10, 0, parent.Position, Vector.Zero, parent):ToNPC()
+	cord.Parent = parent
+	cord.Target = child
+	parent.Child = cord
+	cord.DepthOffset = child.DepthOffset - 150
+	cord.SpriteOffset = Vector(0, -20)
+	
+	if anm2 then
+		cord:GetSprite():Load("gfx/bosses/Cadavra_cord_2.anm2", true)
+	end
+	
+	return cord
+end
 
 local function Lerp(v1, v2, t)
 	return (v1 + (v2 - v1)*t)
@@ -430,6 +446,11 @@ function mod:CadavrasNibsBodyAI(npc)
 				data.state = "Attack1"
 				sprite:Play("Nibs_Shoot", true)
 				npc.Velocity = Vector.Zero
+		elseif data.last + 40 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) or (npc.Position:Distance(player.Position) > 250) then
+				data.state = "Cord"
+				data.Startmovinge = 0
+				sprite:Play("Nibs_Cord", true)
+				npc.Velocity = Vector.Zero
 				
 		end
 		
@@ -448,8 +469,59 @@ function mod:CadavrasNibsBodyAI(npc)
 		data.state = "Walk"
 		data.last = npc.FrameCount
 	end 
+		
+	elseif data.state == "Cord" then
+	if sprite:IsPlaying("Nibs_Cord") then
+		if sprite:IsEventTriggered("Shoot") then
+		
+			local cordEnd = Isaac.Spawn(EntityType.ENTITY_CADAVRA, CORD, 0, npc.Position, Vector.Zero, npc)
+			cordEnd.Parent = npc
+			cordEnd.SpriteOffset = Vector(0, -10)
+			cordEnd.Visible = true
+			cordEnd:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+		end
+	elseif sprite:IsFinished("Nibs_Cord") then
+		sprite:Play("Nibs_CordLoop", true)
+		
+	end
+	if sprite:IsPlaying("Nibs_CordLoop") then
+		if data.Startmovinge == 1 then
+			--[[for i, entity2 in pairs(Isaac.GetRoomEntities()) do
+			if entity2.Type == EntityType.ENTITY_EVIS then
+				entity2:Remove()
+			end
+		end]]
+			for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, CORD, -1, false, false)) do
+				local entityData = entity:GetData()
+				if entity:Exists() then
+					cordEnd2 = entity
+					break
+				end
+			end
+			if cordEnd2.Position:Distance(npc.Position) <= 15 then
+				sprite:Play("Nibs_CordEnd", true)
+				npc.Velocity = Vector.Zero
+				for i, entity2 in pairs(Isaac.GetRoomEntities()) do
+					if entity2.Type == EntityType.ENTITY_EVIS then
+					entity2:Remove()
+					end
+				end
+				cordEnd2:Remove()
+				
+			else
+			
+			npc.Velocity = (cordEnd2.Position - npc.Position):Resized(10)
+			end
+		end
+	end
+	
 	
 	end
+	if sprite:IsFinished("Nibs_CordEnd") then
+		data.state = "Walk"
+		data.last = npc.FrameCount
+	end
+	
 	
 	if npc:IsDead() then
 			local entityData = npc.Parent:GetData()
@@ -459,6 +531,40 @@ function mod:CadavrasNibsBodyAI(npc)
 	end
 end
 mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibsBodyAI, EntityType.ENTITY_CADAVRA)
+
+function mod:CadavrasNibsCordAI(npc)
+	if npc.Variant ~= CORD then
+		return
+	end
+	local room = game:GetRoom()
+	local data = npc:GetData()
+	local sprite = npc:GetSprite()
+    local player = npc:GetPlayerTarget()
+	local rng = npc:GetDropRNG()
+	
+	if not data.init then
+		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
+		sprite:Play("CordEnds", true)
+		data.init = true
+	end
+	if data.Cord == nil then
+	mod:QuickCordCad(npc.Parent, npc, "Cadavra_cord_2")
+	data.Cord = 1
+	end
+	if data.move == nil then
+	npc.Velocity = (player.Position - npc.Position):Resized(15)
+	data.move = 1 
+	end
+	
+	if npc:CollidesWithGrid()then
+		npc.Velocity = Vector.Zero
+		npc.Parent:GetData().Startmovinge = 1
+	end
+		
+end
+
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibsCordAI, EntityType.ENTITY_CADAVRA)
 
 
 --- Extra Code for effects & tears ---
