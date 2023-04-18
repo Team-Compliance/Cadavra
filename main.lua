@@ -13,7 +13,7 @@ local function Lerp(v1, v2, t)
 	return (v1 + (v2 - v1)*t)
 end
 
- 
+--- Main Cadavra ai ---
 function mod:CadavraAI(npc)
     if npc.Variant ~= CADAVRA_HEAD then
 		return
@@ -460,6 +460,10 @@ function mod:CadavrasNibsBodyAI(npc)
 end
 mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.CadavrasNibsBodyAI, EntityType.ENTITY_CADAVRA)
 
+
+--- Extra Code for effects & tears ---
+
+
 function mod:Cadavrasboom(tear,collided)
     local d = tear:GetData()
 	local rng = tear:GetDropRNG()
@@ -519,21 +523,6 @@ mod:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, function(_, tear, coll
 		mod:Cadavrasboom(tear,true)
 	end
 end)
-
-if StageAPI and StageAPI.Loaded then
-	mod.StageAPIBosses = {
-		StageAPI.AddBossData("Cadavra", {
-			Name = "Cadavra",
-			Portrait = "gfx/ui/boss/portrait_cadavra.png",
-			Bossname = "gfx/ui/boss/bossname_cadavra.png",
-			Weight = 1,
-			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
-		})
-	}
-	
-	StageAPI.AddBossToBaseFloorPool({BossID = "Cadavra"}, LevelStage.STAGE4_1, StageType.STAGETYPE_REPENTANCE)
-end
-
 
 function mod:DummyEffectInitCad(effect)
     effect.Visible = false
@@ -672,3 +661,21 @@ function mod.FireClusterProjectilesCad(npc, velocity, numProjectiles, params)
 	corpseClusterParentCad:GetData().corpseClusters = projectiles
 	return projectiles, corpseClusterParentCad
 end
+
+-- Stage API Code--
+
+if StageAPI and StageAPI.Loaded then
+	mod.StageAPIBosses = {
+		StageAPI.AddBossData("Cadavra", {
+			Name = "Cadavra",
+			Portrait = "gfx/ui/boss/portrait_cadavra.png",
+			Bossname = "gfx/ui/boss/bossname_cadavra.png",
+			Weight = 1,
+			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
+		})
+	}
+	
+	StageAPI.AddBossToBaseFloorPool({BossID = "Cadavra"}, LevelStage.STAGE4_1, StageType.STAGETYPE_REPENTANCE)
+end
+
+
