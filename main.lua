@@ -501,6 +501,12 @@ function mod:CadavrasNibsBodyAI(npc)
 			if cordEnd2.Position:Distance(npc.Position) <= 15 then
 				sprite:Play("Nibs_CordEnd", true)
 				npc.Velocity = Vector.Zero
+				local params = ProjectileParams()
+				data.tearColor2 = Color(1,1,1,1)
+				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
+				params.Color = data.tearColor2
+				params.Spread = 2
+				npc:FireProjectiles(npc.Position, (player.Position - npc.Position):Resized(7), 5, params)
 				for i, entity2 in pairs(Isaac.GetRoomEntities()) do
 					if entity2.Type == EntityType.ENTITY_EVIS then
 					entity2:Remove()
@@ -509,8 +515,19 @@ function mod:CadavrasNibsBodyAI(npc)
 				cordEnd2:Remove()
 				
 			else
-			
 			npc:AddVelocity((cordEnd2.Position - npc.Position):Resized(1))
+				if sprite:GetFrame() % 6 == 0 then
+				local veloc = npc.Velocity
+				data.tearColor2 = Color(1,1,1,1)
+				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
+				local params = ProjectileParams()
+				params.BulletFlags = ProjectileFlags.ACCELERATE 
+				params.Variant = 0
+				params.Spread = 6
+				params.Color = data.tearColor2
+				params.Acceleration = 1+1/24
+				npc:FireProjectiles(npc.Position, veloc:Resized(2), 1, params)
+				end
 			end
 		end
 	end
