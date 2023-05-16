@@ -9,3 +9,5 @@ Cadavra's finaly in repentance, After having to wait so long, and hearing no new
 Work on Cadavra's Attacks some more
 
 improve cadavra's body switch mechanic (anyone planning on that)
+
+Spice up Cadavra's Cord attack to make it a better challenge
