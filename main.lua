@@ -49,6 +49,7 @@ function mod:CadavraAI(npc)
         data.bloodExplode = false
 		data.Attacked = 0
 		data.Pos1 = npc.Position
+		data.Choose = 2
 		data.Cord = 0
         data.init = true
 	end
@@ -67,71 +68,18 @@ function mod:CadavraAI(npc)
 		
 		if sprite:IsPlaying("Idle") then
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
-			if data.last + 15 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
-				
-				sprite:Play("Head_Shoot", true)
-			elseif data.last + 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
-				
-				sprite:Play("Head_Shoot_Big", true)
-			elseif data.last + 25 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
-			if #Bodycount > 0 and #Bodycount2 == 0 then
+			if data.last + 25 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
+			if #Bodycount > 0 and #Bodycount2 < 1 then
 			data.Choose = 1
-			elseif #Bodycount2 > 0 and #Bodycount == 0 then
+			elseif #Bodycount2 > 0 and #Bodycount < 1 then
 			data.Choose = 2
-			else
-			data.Choose = math.random(1,2)
 			end
-			print(data.Choose)
+			
 			data.last = npc.FrameCount
 			sprite:Play("ApproachBody", true)
 			data.state = "findbody"
 			end
 		end
-		if sprite:IsPlaying("Head_Shoot") then
-		npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(1.25)
-			--[[sfx:Play(SoundEffect.SOUND_MEATHEADSHOOT, 0.6, 0, false, math.random(9,11)/10)
-			local vector = (player.Position-npc.Position):Resized(15)
-			local params = ProjectileParams()
-			params.Variant = 0
-			npc:FireProjectiles(npc.Position, vector, 3, params)]]
-				if sprite:GetFrame() > 13 and sprite:GetFrame() < 20 and sprite:GetFrame() % 2 == 0 then
-				angle = math.random(1,360);
-				mag = math.random(5,10);
-				projectile = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, 0, 0, npc.Position, (player.Position-npc.Position):Resized(math.random(3,5)):Rotated(math.random(-50,50)), nil):ToProjectile()
-				projectile.ProjectileFlags = ProjectileFlags.DECELERATE
-                projectile.FallingSpeed = 0
-				projectile.FallingAccel = -0.1
-				projectile.ChangeTimeout = 270
-				projectile2 = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, 0, 0, npc.Position, (player.Position-npc.Position):Resized(math.random(3,5)):Rotated(math.random(-100,100)), nil):ToProjectile()
-				projectile2.ProjectileFlags = ProjectileFlags.DECELERATE
-				projectile2.FallingSpeed = 0
-				projectile2.FallingAccel = -0.1
-				projectile2.ChangeTimeout = 270
-				sound:Play(SoundEffect.SOUND_BOSS2_BUBBLES,1,0,false,1)
-				end
-		end
-		
-		if sprite:IsPlaying("Head_Shoot_Big") then
-		npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(1.25)
-			if sprite:IsEventTriggered("Shoot") then
-		        npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
-			    npc:PlaySound(SoundEffect.SOUND_MONSTER_GRUNT_0,1,0,false,1)
-			    local vector = (player.Position-npc.Position)*0.056
-			    local tear = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_NORMAL, 0, npc.Position, vector, npc):ToProjectile();
-			    data.tearColor2 = Color(1,1,1,1)
-				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
-				
-				tear:GetSprite().Color = data.tearColor2
-    				tear.Scale = 2
-			    	tear.FallingSpeed = -26;
-				tear.FallingAccel = 2;
-			    tear:GetData().cadBoom = true
-			    tear:GetData().cadBoomTears = true
-			    tear:GetData().cadGasLife = 325/2
-			end
-		
-		end
-		
 		--[[if sprite:IsPlaying("Idle") and ((data.Phase == 1 and npc.HitPoints < npc.MaxHitPoints * .60) or (data.Phase == 2 and npc.HitPoints < npc.MaxHitPoints * .30)) then
 
 			npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
@@ -147,7 +95,7 @@ function mod:CadavraAI(npc)
 		if sprite:IsPlaying("ApproachBody") then
 			if data.Choose == 1 then
 				--local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
-				if #Bodycount > 0 then
+				
 					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)) do
 						local entityData = entity:GetData()
 						if entityData.state == "nohost" then
@@ -159,14 +107,11 @@ function mod:CadavraAI(npc)
 							print(data.Choose)
 						end
 					end
-				else
-					data.Choose = 2
-					print(data.Choose)
-				end
-			end
-			if data.Choose == 2 then
+				
+			
+			elseif data.Choose == 2 then
 				--local Bodycount2 = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
-				if #Bodycount2 > 0 then
+				
 					for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
 						local entityData = entity:GetData()
 						if entityData.state == "nohost" then
@@ -177,10 +122,7 @@ function mod:CadavraAI(npc)
 							print(data.Choose)
 						end
 					end
-				else
-					data.Choose = 1
-					print(data.Choose)
-				end
+		
 			end
 			--[[if data.Choose == 2 then
 				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
@@ -245,18 +187,18 @@ function mod:CadavraAI(npc)
 		elseif body.Position:Distance(npc.Position)<= 30 then
 			npc.Velocity = (body.Position - npc.Position):Resized(6)
 		else
-			data.velo = (body.Position - npc.Position):Resized(0.1)
+			data.velo = (body.Position - npc.Position):Resized(0.5)
 			npc:AddVelocity(data.velo)
-			if sprite:GetFrame() == 5 then
+			--[[if sprite:GetFrame() == 5 then
 					angle = math.random(1,360);
 					mag = math.random(5,10);
 					projectile = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, 0, 0, npc.Position, (player.Position-npc.Position):Resized(math.random(3,5)):Rotated(math.random(-360,360)), nil):ToProjectile()
-					projectile.ProjectileFlags = ProjectileFlags.DECELERATE
+					--projectile.ProjectileFlags = ProjectileFlags.DECELERATE
 					projectile.FallingSpeed = 1
 					projectile.FallingAccel = -0.1
 					projectile.ChangeTimeout = 270
 					sound:Play(SoundEffect.SOUND_BOSS2_BUBBLES,1,0,false,1)
-				end
+				end]]
 		end
 		
 		end
@@ -271,8 +213,9 @@ function mod:CadavraAI(npc)
 		end
 		
 	elseif data.state == "Escape" then
+		print(data.Choose)
 		if data.damaged == false then
-			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.25)
+			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.50)
 			data.damaged = true
 		end
 		data.Cord = 0
@@ -283,11 +226,24 @@ function mod:CadavraAI(npc)
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 		npc.Visible = true
 		elseif sprite:IsFinished("BodyDestroyed") then
+				if data.Choose == 1 then
+				data.Choose = 2
+				else
+				print(data.Choose)
+				data.Choose = 1
+				end
 		data.last = npc.FrameCount
 		sprite:Play("Idle", true)
 		data.state = "Normal"
 		end
 	elseif data.state == "Abandon" then
+	print(data.Choose)
+		if data.Choose == 1 then
+				data.Choose = 2
+				print(data.Choose)
+				else
+				data.Choose = 1
+				end
 		data.Attacked = 0
 		npc.Position = data.Pos1
 		data.last = npc.FrameCount
@@ -315,7 +271,6 @@ function mod:CadavrasChubsBodyAI(npc)
 	
 	
 	if not data.init then
-		npc.HitPoints = 300
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 		data.state = "nohost"
@@ -456,10 +411,28 @@ function mod:CadavrasChubsBodyAI(npc)
 		end
 	elseif data.state == "Abandon" then
 		sprite.FlipX = false
-		if sprite:IsFinished("Chubs_Abandon") then
+		if sprite:GetFrame() == 17 then
+		data.Offset = (rng:RandomInt(90) - 90) 
+		for i = 1,3 do
+		npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
+			    local vector = Vector(math.cos(i*math.pi/1.5),math.sin(i*math.pi/1.5)):Resized(10)
+			    local tear = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_NORMAL, 0, npc.Position, vector, npc):ToProjectile();
+			    data.tearColor2 = Color(1,1,1,1)
+				data.tearColor2:SetColorize(1.5,2.2,0.8,1)
+				
+				tear:GetSprite().Color = data.tearColor2
+    				tear.Scale = 2
+			    	tear.FallingSpeed = -26;
+				tear.FallingAccel = 2;
+			    tear:GetData().cadBoom = true
+			    tear:GetData().cadBoomTears = true
+			    tear:GetData().cadGasLife = 325/2
+		end
+		elseif sprite:IsFinished("Chubs_Abandon") then
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
 		entityData.damaged = false
+		entityData.Choose = 1
 		data.state = "nohost"
 		entityData.Pos1 = npc.Position
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
@@ -467,11 +440,11 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.Activated = false
 		end
 	end 
-end
 	
 	if npc:IsDead() then
 			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
+			entityData.Choose = 1
 			entityData.damaged = false
 			entityData.Pos1 = npc.Position
 			npc.Parent:GetSprite():Play("BodyDestroyed", true)
@@ -499,7 +472,6 @@ function mod:CadavrasNibsBodyAI(npc)
 	data.clusterParams.Color = data.ColorWigglyMaggot
 	
 	if not data.init then
-		npc.HitPoints = 150
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 		data.state = "nohost"
@@ -639,10 +611,24 @@ function mod:CadavrasNibsBodyAI(npc)
 	end
 	elseif data.state == "Abandon" then
 		sprite.FlipX = false
-		if sprite:GetFrame() == 31 then 
+		if sprite:IsPlaying("Nibs_Abandon") then
+		if sprite:GetFrame() % 3 == 0 and sprite:GetFrame() < 30 then
+					angle = math.random(1,360);
+					mag = math.random(5,10);
+					projectile = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, 0, 0, npc.Position, (player.Position-npc.Position):Resized(math.random(5,7)):Rotated(math.random(-360,360)), nil):ToProjectile()
+					projectile.ProjectileFlags = ProjectileFlags.DECELERATE
+					projectile.FallingSpeed = 1
+					projectile.FallingAccel = -0.1
+					projectile.ChangeTimeout = 270
+					sound:Play(SoundEffect.SOUND_BOSS2_BUBBLES,1,0,false,1)
+				end
+		end
+		
+		if sprite:GetFrame() == 31 then
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
 		entityData.damaged = false
+		entityData.Choose = 2
 		data.state = "nohost"
 		entityData.Pos1 = npc.Position
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
@@ -656,6 +642,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	if npc:IsDead() then
 			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
+			entityData.Choose = 2
 			entityData.Pos1 = npc.Position
 			npc.Parent:GetSprite():Play("BodyDestroyed", true)
 			for i, entity2 in pairs(Isaac.GetRoomEntities()) do
