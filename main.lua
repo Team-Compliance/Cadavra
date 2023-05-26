@@ -456,14 +456,16 @@ function mod:CadavrasChubsBodyAI(npc)
 		end
 	elseif data.state == "Abandon" then
 		sprite.FlipX = false
-		if sprite:GetFrame() == 31 then
+		if sprite:IsFinished("Chubs_Abandon") then
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
+		entityData.damaged = false
 		data.state = "nohost"
 		entityData.Pos1 = npc.Position
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 		sprite:Play("Chubs_Body", true)
 		data.Activated = false
+		end
 	end 
 end
 	
