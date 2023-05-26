@@ -19,7 +19,7 @@ function mod:QuickCordCad(parent, child, anm2)
 	cord.Target = child
 	parent.Child = cord
 	cord.DepthOffset = child.DepthOffset - 150
-	cord.SpriteOffset = Vector(0, 0)
+	
 	
 	
 	if anm2 then
@@ -39,19 +39,18 @@ function mod:CadavraAI(npc)
 	
 	local sprite = npc:GetSprite()
     local player = npc:GetPlayerTarget()
-    local dir = player.Position - npc.Position
 	local body = nil
 	if not data.init then
 	    npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 	    data.state = "Normal"
 		data.damaged = false
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-        data.bloodExplode = false
 		data.Attacked = 0
 		data.Pos1 = npc.Position
-		data.Choose = 2
+		data.Choose = 1
 		data.Cord = 0
         data.init = true
+		sprite:Play("Appear", true)
 	end
 	
 	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)	
@@ -60,36 +59,29 @@ function mod:CadavraAI(npc)
     -- Appear --
 	
     if data.state == "Normal" then
-        if sprite:IsFinished("Appear") or sprite:IsFinished("Head_Shoot") or sprite:IsFinished("Head_Shoot_Big") then
+        if sprite:IsFinished("Appear") then
             data.noise = true
 			data.last = npc.FrameCount
 			sprite:Play("Idle", true)
 		end
 		
 		if sprite:IsPlaying("Idle") then
-			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
-			if data.last + 25 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
-			if #Bodycount > 0 and #Bodycount2 < 1 then
-			data.Choose = 1
-			elseif #Bodycount2 > 0 and #Bodycount < 1 then
-			data.Choose = 2
+			--npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
+			if (#Bodycount > 0 or #Bodycount2 > 0) then
+				if #Bodycount > 0 and #Bodycount2 < 1 then
+				data.Choose = 1
+				elseif #Bodycount2 > 0 and #Bodycount < 1 then
+				data.Choose = 2
+				end
+			data.last = npc.FrameCount
+			sprite:Play("ApproachBody", true)
+			data.state = "findbody"
+			else
+				npc.Pathfinder:MoveRandomlyBoss(true)
 			end
 			
-			data.last = npc.FrameCount
-			sprite:Play("ApproachBody", true)
-			data.state = "findbody"
-			end
 		end
-		--[[if sprite:IsPlaying("Idle") and ((data.Phase == 1 and npc.HitPoints < npc.MaxHitPoints * .60) or (data.Phase == 2 and npc.HitPoints < npc.MaxHitPoints * .30)) then
-
-			npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-			data.Choose = math.random(1,2)
-			print(data.Choose)
-			data.last = npc.FrameCount
-			sprite:Play("ApproachBody", true)
-			data.state = "findbody"
-			--rng:RandomInt(1,2)
-		end]]
+		
 	
 	elseif data.state == "findbody" then
 		if sprite:IsPlaying("ApproachBody") then
@@ -104,7 +96,7 @@ function mod:CadavraAI(npc)
 							break
 						else
 							data.Choose = 2
-							print(data.Choose)
+							
 						end
 					end
 				
@@ -119,37 +111,11 @@ function mod:CadavraAI(npc)
 							break
 						else
 							data.Choose = 1
-							print(data.Choose)
+							
 						end
 					end
 		
-			end
-			--[[if data.Choose == 2 then
-				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
-					local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
-					if #Bodycount > 0 then
-						local entityData = entity:GetData()
-							if entityData.state == "nohost" then
-								body = entity
-								break
-							else
-								break
-								data.Choose = 1
-								print(data.Choose)
-							end
-					else
-						break
-						data.Choose = 1
-						print(data.Choose)
-						
-					
-				end
-			end
-		end]]
-			
-		
-		
-		
+			end	
 		if body.Position:Distance(npc.Position)<= 5 then
 			if data.Choose == 1 then 
 			data.Startefusionbody = body
@@ -182,23 +148,13 @@ function mod:CadavraAI(npc)
 				end
 			end
 		elseif body.Position:Distance(npc.Position)<= 75 and body.Position:Distance(npc.Position)> 30 then
-			data.velo = (body.Position - npc.Position):Resized(1)
+			data.velo = (body.Position - npc.Position):Resized(3)
 			npc:AddVelocity(data.velo)
 		elseif body.Position:Distance(npc.Position)<= 30 then
 			npc.Velocity = (body.Position - npc.Position):Resized(6)
 		else
-			data.velo = (body.Position - npc.Position):Resized(0.5)
+			data.velo = (body.Position - npc.Position):Resized(1)
 			npc:AddVelocity(data.velo)
-			--[[if sprite:GetFrame() == 5 then
-					angle = math.random(1,360);
-					mag = math.random(5,10);
-					projectile = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, 0, 0, npc.Position, (player.Position-npc.Position):Resized(math.random(3,5)):Rotated(math.random(-360,360)), nil):ToProjectile()
-					--projectile.ProjectileFlags = ProjectileFlags.DECELERATE
-					projectile.FallingSpeed = 1
-					projectile.FallingAccel = -0.1
-					projectile.ChangeTimeout = 270
-					sound:Play(SoundEffect.SOUND_BOSS2_BUBBLES,1,0,false,1)
-				end]]
 		end
 		
 		end
@@ -213,9 +169,9 @@ function mod:CadavraAI(npc)
 		end
 		
 	elseif data.state == "Escape" then
-		print(data.Choose)
+		
 		if data.damaged == false then
-			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.50)
+			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.75)
 			data.damaged = true
 		end
 		data.Cord = 0
@@ -229,7 +185,7 @@ function mod:CadavraAI(npc)
 				if data.Choose == 1 then
 				data.Choose = 2
 				else
-				print(data.Choose)
+				
 				data.Choose = 1
 				end
 		data.last = npc.FrameCount
@@ -237,10 +193,10 @@ function mod:CadavraAI(npc)
 		data.state = "Normal"
 		end
 	elseif data.state == "Abandon" then
-	print(data.Choose)
+	
 		if data.Choose == 1 then
 				data.Choose = 2
-				print(data.Choose)
+				
 				else
 				data.Choose = 1
 				end
@@ -412,6 +368,11 @@ function mod:CadavrasChubsBodyAI(npc)
 	elseif data.state == "Abandon" then
 		sprite.FlipX = false
 		if sprite:GetFrame() == 17 then
+		local shotMin = 10
+				local shotMax = 20
+				local params = ProjectileParams()
+				params.Variant = 0
+				npc:FireBossProjectiles(shotMin+rng:RandomInt(shotMax-shotMin + 1), player.Position, 0, params)
 		data.Offset = (rng:RandomInt(90) - 90) 
 		for i = 1,3 do
 		npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
@@ -442,6 +403,15 @@ function mod:CadavrasChubsBodyAI(npc)
 	end 
 	
 	if npc:IsDead() then
+				data.Offset = (rng:RandomInt(90) - 90) 
+				for i = 1,3 do
+				npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
+			    local vector = Vector(math.cos(i*math.pi/1.5),math.sin(i*math.pi/1.5)):Resized(10)
+			    local tear = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_MEAT, 0, npc.Position, vector, npc):ToProjectile();
+			    tear.FallingSpeed = -26;
+				tear.FallingAccel = 2
+				tear.ProjectileFlags = ProjectileFlags.ACCELERATE 
+		end
 			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
 			entityData.Choose = 1
@@ -490,10 +460,6 @@ function mod:CadavrasNibsBodyAI(npc)
 		data.Attacked = 0
 		sprite:Play("Nibs_Enter", true)
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-		
-		if npc.HitPoints <= 50 then
-			npc.HitPoints = 150 + npc.HitPoints
-		end
 		data.Doactivate = false
 	end
 
@@ -551,6 +517,11 @@ function mod:CadavrasNibsBodyAI(npc)
 	elseif data.state == "Cord" then
 	if sprite:IsPlaying("Nibs_Cord") then
 		if sprite:IsEventTriggered("Shoot") then
+			local shotMin = 10
+			local shotMax = 20
+			local params = ProjectileParams()
+			params.Variant = 0
+			npc:FireBossProjectiles(shotMin+rng:RandomInt(shotMax-shotMin + 1), player.Position, 0, params)
 			sound:Play(SoundEffect.SOUND_MEATHEADSHOOT, 0.6, 0, false, math.random(9,11)/10)
 			local cordEnd = Isaac.Spawn(EntityType.ENTITY_CADAVRA, CORD, 0, npc.Position, Vector.Zero, npc)
 			cordEnd.Parent = npc
@@ -622,8 +593,15 @@ function mod:CadavrasNibsBodyAI(npc)
 					projectile.ChangeTimeout = 270
 					sound:Play(SoundEffect.SOUND_BOSS2_BUBBLES,1,0,false,1)
 				end
+		if sprite:GetFrame() == 17 then
+		local shotMin = 10
+				local shotMax = 20
+				local params = ProjectileParams()
+				params.Variant = 0
+				npc:FireBossProjectiles(shotMin+rng:RandomInt(shotMax-shotMin + 1), player.Position, 0, params)
 		end
 		
+		end
 		if sprite:GetFrame() == 31 then
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
