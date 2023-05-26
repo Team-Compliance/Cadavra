@@ -1,9 +1,9 @@
 <entities anm2root="gfx\" version="1">
-    <entity anm2path="bosses\922.000_cadavra.anm2" baseHP="300" boss="1" bossID="103" champion="0" collisionDamage="2" collisionMass="30" collisionRadius="16" friction="1" gridCollision="walls" id="922" name="Cadavra" numGridCollisionPoints="12" shadowSize="23" stageHP="0" variant="0" portrait="22" tags="nodelirium">
+    <entity anm2path="bosses\922.000_cadavra.anm2" baseHP="574" boss="1" bossID="103" champion="0" collisionDamage="2" collisionMass="30" collisionRadius="16" friction="1" gridCollision="walls" id="922" name="Cadavra" numGridCollisionPoints="12" shadowSize="23" stageHP="0" variant="0" portrait="22" tags="nodelirium">
 		<bestiary transform="0,0,1" anim="Bestiary" />
         <gibs amount="7" blood="1" bone="0" eye="1" gut="1" large="0" />
     </entity>
-    <entity anm2path="bosses\922.000_cadavra.anm2" baseHP="570" boss="1" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" gridCollision="ground" id="922" name="Chubs (Cadavra)" numGridCollisionPoints="12" shadowSize="30" stageHP="0" variant="1" portrait="22" tags="nodelirium">
+    <entity anm2path="bosses\922.000_cadavra.anm2" baseHP="482" boss="1" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" gridCollision="ground" id="922" name="Chubs (Cadavra)" numGridCollisionPoints="12" shadowSize="30" stageHP="0" variant="1" portrait="22" tags="nodelirium">
         <gibs amount="7" blood="1" bone="0" eye="1" gut="1" large="0" />
     </entity>
     <entity anm2path="bosses\922.000_cadavra.anm2" baseHP="360" boss="1" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" gridCollision="ground" id="922" name="Nibs (Cadavra)" numGridCollisionPoints="12" shadowSize="20" stageHP="0" variant="2" portrait="22" tags="nodelirium">
