@@ -456,7 +456,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		end
 	elseif data.state == "Abandon" then
 		sprite.FlipX = false
-		if sprite:GetFrame() == 31 then
+		if sprite:GetFrame() >= 30 then
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
 		data.state = "nohost"
