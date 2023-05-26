@@ -68,12 +68,12 @@ function mod:CadavraAI(npc)
 		if sprite:IsPlaying("Idle") then
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
 			if data.last + 15 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
-				data.Attacked = data.Attacked + 1
+				
 				sprite:Play("Head_Shoot", true)
 			elseif data.last + 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
-				data.Attacked = data.Attacked + 1
+				
 				sprite:Play("Head_Shoot_Big", true)
-			elseif data.Attacked > 2 and data.last + 25 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
+			elseif data.last + 25 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
 			if #Bodycount > 0 and #Bodycount2 == 0 then
 			data.Choose = 1
 			elseif #Bodycount2 > 0 and #Bodycount == 0 then
