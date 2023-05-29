@@ -657,9 +657,14 @@ function mod:CadavrasNibsCordAI(npc)
 	data.move = 1 
 	end
 	
-	if npc:CollidesWithGrid()then
+	if npc:CollidesWithGrid() then
 		npc.Velocity = Vector.Zero
+		data.moving = 0
 		npc.Parent:GetData().Startmovinge = 1
+	elseif not npc:CollidesWithGrid() then
+	if data.moving == 1 then
+		npc:AddVelocity(data.vector)
+	end
 	end
 		
 end
