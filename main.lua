@@ -230,7 +230,6 @@ function mod:CadavrasChubsBodyAI(npc)
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 		data.state = "nohost"
-		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 		sprite:Play("Chubs_Body", true)
 		data.init = true
 		data.last = 0
@@ -423,7 +422,6 @@ function mod:CadavrasChubsBodyAI(npc)
 		entityData.Choose = 1
 		data.state = "nohost"
 		entityData.Pos1 = npc.Position
-		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 		sprite:Play("Chubs_Body", true)
 		data.Activated = false
 		end
@@ -439,12 +437,15 @@ function mod:CadavrasChubsBodyAI(npc)
 				tear.FallingAccel = 2
 				tear.ProjectileFlags = ProjectileFlags.ACCELERATE 
 		end
+			if data.Activated == true then
 			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
 			entityData.Choose = 1
 			entityData.damaged = false
 			entityData.Pos1 = npc.Position
 			npc.Parent:GetSprite():Play("BodyDestroyed", true)
+			else
+			end
 	end
 end
 
@@ -472,7 +473,6 @@ function mod:CadavrasNibsBodyAI(npc)
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 		data.state = "nohost"
-		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 		data.last = npc.FrameCount
 		sprite:Play("Nibs_Body", true)
 		data.Startmovinge = 0
@@ -664,7 +664,6 @@ function mod:CadavrasNibsBodyAI(npc)
 		entityData.Choose = 2
 		data.state = "nohost"
 		entityData.Pos1 = npc.Position
-		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 		sprite:Play("Nibs_Body", true)
 		data.Activated = false
 		end
@@ -673,15 +672,18 @@ function mod:CadavrasNibsBodyAI(npc)
 	
 	
 	if npc:IsDead() then
+		if data.Activated == true then
 			local entityData = npc.Parent:GetData()
 			entityData.state = "Escape"
 			entityData.Choose = 2
 			entityData.Pos1 = npc.Position
 			npc.Parent:GetSprite():Play("BodyDestroyed", true)
 			for i, entity2 in pairs(Isaac.GetRoomEntities()) do
-			if entity2.Type == EntityType.ENTITY_EVIS or (entity2.Type == EntityType.ENTITY_EVIS and entity2.Variant == CORD) then
-				entity2:Remove()
+				if entity2.Type == EntityType.ENTITY_EVIS or (entity2.Type == EntityType.ENTITY_EVIS and entity2.Variant == CORD) then
+					entity2:Remove()
+				end
 			end
+		else
 		end
 	end
 end
