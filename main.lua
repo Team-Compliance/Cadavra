@@ -67,7 +67,7 @@ function mod:CadavraAI(npc)
 		
 		if sprite:IsPlaying("Idle") then
 			--npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
-			if (#Bodycount > 0 or #Bodycount2 > 0) then
+			if data.last + 23 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
 				if #Bodycount > 0 and #Bodycount2 < 1 then
 				data.Choose = 1
 				elseif #Bodycount2 > 0 and #Bodycount < 1 then
@@ -224,7 +224,7 @@ function mod:CadavrasChubsBodyAI(npc)
 	local rng = npc:GetDropRNG()
 	local angle = npc.Velocity:GetAngleDegrees()
 
-	
+	local Head = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CADAVRA_HEAD, -1, false, false)
 	
 	if not data.init then
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
@@ -239,22 +239,21 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.Attacked = 0
 	end
 	
-	local Globcount = Isaac.FindByType(24, 0, -1, false, false)
-	local GazeGlobcount = Isaac.FindByType(24, 1, -1, false, false)
+	local Flycount = Isaac.FindByType(18, 0, -1, false, false)
 	if sprite:IsPlaying("Chubs_Body") then
-		if (#Globcount == 0 and #GazeGlobcount == 0)and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
+		if #Head > 0 and #Flycount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Chubs_Body_Shoot", true)
 		end
 	end
 	if sprite:IsPlaying("Chubs_Body_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
-			data.i = math.random(1,3)
-			npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
-			local vector = Vector(math.cos(data.i*math.pi/1.5),math.sin(data.i*math.pi/1.5)):Resized(10)
-			local tear = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_MEAT, 0, npc.Position, vector, npc):ToProjectile();
-			tear.FallingSpeed = -26;
-			tear.FallingAccel = 10
-			tear.ProjectileFlags = ProjectileFlags.BOUNCE 
+			for i = 1, 3 do
+                    local maggot = Isaac.Spawn(18, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(2, 3)), vessel):ToNPC()
+                    maggot.V1 = Vector(-5, 5)
+                    maggot.I1 = 1
+                    maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+            end
+			
 		end	
 	elseif sprite:IsFinished("Chubs_Body_Shoot") then
 			print("Finished animation")
@@ -349,6 +348,7 @@ function mod:CadavrasChubsBodyAI(npc)
 	elseif data.state == "Attack2" then
 		sprite.FlipX = false
 			if data.direction == false then
+			npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
 			sound:Play(SoundEffect.SOUND_BOSS_LITE_ROAR, 1, 0, false, 1)	
 			local angle = (player.Position - npc.Position):GetAngleDegrees()
 				if angle >= -45 and angle <= 45 then
@@ -367,6 +367,7 @@ function mod:CadavrasChubsBodyAI(npc)
 			if sprite:IsEventTriggered("Jump") then
 			npc.Velocity = (player.Position-npc.Position) * 0.05
 			elseif sprite:IsEventTriggered("Shoot") then
+			npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
 			sound:Play(SoundEffect.SOUND_FORESTBOSS_STOMPS, 1, 0, false, 1)
 			for _ = 1,(rng:RandomInt(2)+4) do
 					local params = ProjectileParams()
@@ -409,8 +410,8 @@ function mod:CadavrasChubsBodyAI(npc)
 				
 				tear:GetSprite().Color = data.tearColor2
     				tear.Scale = 2
-			    	tear.FallingSpeed = -26;
-				tear.FallingAccel = 2;
+			    	tear.FallingSpeed = -16;
+				tear.FallingAccel = 1;
 			    tear:GetData().cadBoom = true
 			    tear:GetData().cadBoomTears = true
 			    tear:GetData().cadGasLife = 325/2
@@ -462,6 +463,7 @@ function mod:CadavrasNibsBodyAI(npc)
     local player = npc:GetPlayerTarget()
 	local rng = npc:GetDropRNG()
 	
+	local Head = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CADAVRA_HEAD, -1, false, false)
 	
 	data.clusterParams = ProjectileParams()
 	data.clusterParams.FallingAccelModifier = -0.1
@@ -485,7 +487,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
 	local Wormcount = Isaac.FindByType(853, 0, -1, false, false)
 	if sprite:IsPlaying("Nibs_Body") then
-		if #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
+		if #Head > 0 and #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Nibs_Body_Shoot", true)
 		end
 	end
@@ -498,7 +500,6 @@ function mod:CadavrasNibsBodyAI(npc)
                     maggot.I1 = 1
                     maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
                     maggot.State = NpcState.STATE_SPECIAL
-                    data.Maggots = data.Maggots + 1
             end
 		end
 	elseif sprite:IsFinished("Nibs_Body_Shoot") then
@@ -537,12 +538,12 @@ function mod:CadavrasNibsBodyAI(npc)
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Normalized() * 0.5 * 6
 		end
 		
-		if data.last + 15 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
+		if data.last + 15 < npc.FrameCount and rng:RandomInt(15) == rng:RandomInt(15) then
 				data.state = "Attack1"
 				sprite:Play("Nibs_Shoot", true)
 				npc.Velocity = Vector.Zero
 				data.Attacked = data.Attacked + 1
-		elseif data.last + 40 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) or (npc.Position:Distance(player.Position) > 250) then
+		elseif data.last + 20 < npc.FrameCount and rng:RandomInt(15) == rng:RandomInt(15) then
 				data.state = "Cord"
 				data.Startmovinge = 0
 				data.Attacked = data.Attacked + 1
@@ -572,11 +573,6 @@ function mod:CadavrasNibsBodyAI(npc)
 	elseif data.state == "Cord" then
 	if sprite:IsPlaying("Nibs_Cord") then
 		if sprite:IsEventTriggered("Shoot") then
-			local shotMin = 10
-			local shotMax = 20
-			local params = ProjectileParams()
-			params.Variant = 0
-			npc:FireBossProjectiles(shotMin+rng:RandomInt(shotMax-shotMin + 1), player.Position, 0, params)
 			sound:Play(SoundEffect.SOUND_MEATHEADSHOOT, 0.6, 0, false, math.random(9,11)/10)
 			local cordEnd = Isaac.Spawn(EntityType.ENTITY_CADAVRA, CORD, 0, npc.Position, Vector.Zero, npc)
 			cordEnd.Parent = npc
@@ -615,7 +611,7 @@ function mod:CadavrasNibsBodyAI(npc)
 				
 			else
 			npc:AddVelocity((cordEnd2.Position - npc.Position):Resized(1))
-				if sprite:GetFrame() % 6 == 0 then
+				if sprite:GetFrame() % 8 == 0 then
 				sound:Play(SoundEffect.SOUND_BLOODSHOOT, 0.6, 0, false, math.random(9,11)/10)
 				local veloc = npc.Velocity
 				data.tearColor2 = Color(1,1,1,1)
@@ -693,12 +689,12 @@ function mod:CadavrasNibsCordAI(npc)
 	if npc.Variant ~= CORD then
 		return
 	end
+	npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
 	local room = game:GetRoom()
 	local data = npc:GetData()
 	local sprite = npc:GetSprite()
     local player = npc:GetPlayerTarget()
 	local rng = npc:GetDropRNG()
-	
 	if not data.init then
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
@@ -708,11 +704,8 @@ function mod:CadavrasNibsCordAI(npc)
 	if data.Cord == nil then
 	mod:QuickCordCad(npc.Parent, npc, "Cadavra_cord_2")
 	data.Cord = 1
+	npc.Velocity = (player.Position - npc.Position):Resized(15)
 	data.moving = 1
-	end
-	if data.move == nil then
-	data.vector = (player.Position - npc.Position):Resized(5)
-	data.move = 1 
 	end
 	
 	
@@ -725,10 +718,6 @@ function mod:CadavrasNibsCordAI(npc)
 		npc.Velocity = Vector.Zero
 		data.moving = 0
 		npc.Parent:GetData().Startmovinge = 1
-	else
-	if data.moving == 1 then
-		npc:AddVelocity(data.vector)
-	end
 	end
 		
 end
