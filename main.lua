@@ -233,6 +233,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 		sprite:Play("Chubs_Body", true)
 		data.init = true
+		data.last = 0
 		data.GridCountdown = 0
 		data.direction = false
 		data.repeatjump = 0
@@ -240,8 +241,9 @@ function mod:CadavrasChubsBodyAI(npc)
 	end
 	
 	local Globcount = Isaac.FindByType(24, 0, -1, false, false)
+	local GazeGlobcount = Isaac.FindByType(24, 1, -1, false, false)
 	if sprite:IsPlaying("Chubs_Body") then
-		if #Globcount == 0 then 
+		if (#Globcount == 0 and #GazeGlobcount == 0)and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Chubs_Body_Shoot", true)
 		end
 	end
@@ -483,7 +485,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
 	local Wormcount = Isaac.FindByType(853, 0, -1, false, false)
 	if sprite:IsPlaying("Nibs_Body") then
-		if #Wormcount == 0 then 
+		if #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Nibs_Body_Shoot", true)
 		end
 	end
