@@ -239,6 +239,28 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.Attacked = 0
 	end
 	
+	local Globcount = Isaac.FindByType(24, 0, -1, false, false)
+	if sprite:IsPlaying("Chubs_Body") then
+		if #Globcount == 0 then 
+		sprite:Play("Chubs_Body_Shoot", true)
+		end
+	end
+	if sprite:IsPlaying("Chubs_Body_Shoot") then
+		if sprite:IsEventTriggered("Shoot") then
+			data.i = math.random(1,3)
+			npc:PlaySound(SoundEffect.SOUND_MEATHEADSHOOT,1,0,false,1)
+			local vector = Vector(math.cos(data.i*math.pi/1.5),math.sin(data.i*math.pi/1.5)):Resized(10)
+			local tear = Isaac.Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_MEAT, 0, npc.Position, vector, npc):ToProjectile();
+			tear.FallingSpeed = -26;
+			tear.FallingAccel = 10
+			tear.ProjectileFlags = ProjectileFlags.BOUNCE 
+		end	
+	elseif sprite:IsFinished("Chubs_Body_Shoot") then
+			print("Finished animation")
+			sprite:Play("Chubs_Body", true)
+			data.last = npc.FrameCount
+	end
+	
 	if data.Doactivate then
 		data.Activated = true
 		data.Attacked = 0
@@ -253,7 +275,7 @@ function mod:CadavrasChubsBodyAI(npc)
 			data.state = "Walk"
 		end
 	end
-	
+	local Bodycount2 = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
 	if data.state == "Walk" then
 		npc:AnimWalkFrame("Chubs_WalkHori", "Chubs_WalkVert", 0.3)
 		
@@ -280,10 +302,12 @@ function mod:CadavrasChubsBodyAI(npc)
 				data.state = "Attack2"
 				data.direction = false
 				data.Attacked = data.Attacked + 1
-		elseif (data.Attacked > 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked == 5 then
+		elseif #Bodycount2 == 1 then
+			if (data.Attacked > 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked >= 5 then
 				sprite:Play("Chubs_Abandon", true)
 				npc.Velocity = Vector.Zero
 				data.state = "Abandon"
+			end
 		end
 	
 	
@@ -296,6 +320,7 @@ function mod:CadavrasChubsBodyAI(npc)
 			npc.Velocity = (player.Position-npc.Position)*0.056
 			sound:Play(SoundEffect.SOUND_BOSS_LITE_ROAR, 1, 0, false, 1)
 			elseif sprite:IsEventTriggered("Shoot") then
+				Game():ShakeScreen(30)
 				sound:Play(SoundEffect.SOUND_FORESTBOSS_STOMPS, 1, 0, false, 1)
 				npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 				npc.GridCollisionClass = GridCollisionClass.COLLISION_SOLID
@@ -455,6 +480,31 @@ function mod:CadavrasNibsBodyAI(npc)
 	end
 	if data.GridCountdown == nil then data.GridCountdown = 0 end
 	
+	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
+	local Wormcount = Isaac.FindByType(853, 0, -1, false, false)
+	if sprite:IsPlaying("Nibs_Body") then
+		if #Wormcount == 0 then 
+		sprite:Play("Nibs_Body_Shoot", true)
+		end
+	end
+	if sprite:IsPlaying("Nibs_Body_Shoot") then
+		if sprite:IsEventTriggered("Shoot") then
+			data.Maggots = 0
+			for i = 1, 3 do
+                    local maggot = Isaac.Spawn(EntityType.ENTITY_SMALL_MAGGOT, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(2, 3)), vessel):ToNPC()
+                    maggot.V1 = Vector(-10, 10)
+                    maggot.I1 = 1
+                    maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                    maggot.State = NpcState.STATE_SPECIAL
+                    data.Maggots = data.Maggots + 1
+            end
+		end
+	elseif sprite:IsFinished("Nibs_Body_Shoot") then
+			print("Finished animation")
+			sprite:Play("Nibs_Body", true)
+			data.last = npc.FrameCount
+	end
+	
 	if data.Doactivate then
 		data.Activated = true
 		data.Attacked = 0
@@ -470,6 +520,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	end
 	
 	if data.state == "Walk" then
+		
 		npc:AnimWalkFrame("Nibs_WalkHori", "Nibs_WalkVert", 0.1)
 		
 		
@@ -495,10 +546,12 @@ function mod:CadavrasNibsBodyAI(npc)
 				data.Attacked = data.Attacked + 1
 				sprite:Play("Nibs_Cord", true)
 				npc.Velocity = Vector.Zero
-		elseif (data.Attacked > 0 and data.last + 40 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked >= 5 then
+		elseif #Bodycount == 1 then
+			if (data.Attacked > 0 and data.last + 40 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked >= 5 then
 				sprite:Play("Nibs_Abandon", true)
 				npc.Velocity = Vector.Zero
 				data.state = "Abandon"
+			end
 		end
 		
 		
@@ -651,17 +704,24 @@ function mod:CadavrasNibsCordAI(npc)
 	if data.Cord == nil then
 	mod:QuickCordCad(npc.Parent, npc, "Cadavra_cord_2")
 	data.Cord = 1
+	data.moving = 1
 	end
 	if data.move == nil then
-	npc.Velocity = (player.Position - npc.Position):Resized(15)
+	data.vector = (player.Position - npc.Position):Resized(5)
 	data.move = 1 
 	end
+	
+	
+	if data.moving == 0 then
+		npc.Velocity = Vector.Zero
+	end
+	
 	
 	if npc:CollidesWithGrid() then
 		npc.Velocity = Vector.Zero
 		data.moving = 0
 		npc.Parent:GetData().Startmovinge = 1
-	elseif not npc:CollidesWithGrid() then
+	else
 	if data.moving == 1 then
 		npc:AddVelocity(data.vector)
 	end
