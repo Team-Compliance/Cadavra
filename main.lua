@@ -37,6 +37,12 @@ function mod:CadavraAI(npc)
 	local data = npc:GetData()
 	local rng = npc:GetDropRNG()
 	
+	data.clusterParams = ProjectileParams()
+	data.clusterParams.FallingAccelModifier = -0.1
+	data.ColorWigglyMaggot = Color(1,1,1,1,0,0,0)
+	data.ColorWigglyMaggot:SetColorize(4,3,3,1)
+	data.clusterParams.Color = data.ColorWigglyMaggot
+	
 	local sprite = npc:GetSprite()
     local player = npc:GetPlayerTarget()
 	local body = nil
@@ -58,7 +64,7 @@ function mod:CadavraAI(npc)
     
     -- Appear --
 	
-    if data.state == "Normal" then
+   if data.state == "Normal" then
         if sprite:IsFinished("Appear") then
             data.noise = true
 			data.last = npc.FrameCount
@@ -78,10 +84,24 @@ function mod:CadavraAI(npc)
 			data.state = "findbody"
 			else
 				npc.Pathfinder:MoveRandomlyBoss(true)
+				if rng:RandomInt(30) == rng:RandomInt(30) then
+					sprite:Play("Head_Shoot_Big", true)
+				end
 			end
 			
 		end
 		
+		if sprite:IsPlaying("Head_Shoot_Big") then
+			npc.Velocity = npc.Velocity * 0.08
+			if sprite:IsEventTriggered("Shoot") then
+				sound:Play(SoundEffect.SOUND_BOSS_SPIT_BLOB_BARF,1,0,false,1)
+				mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
+			end
+		elseif sprite:IsFinished("Head_Shoot_Big") then
+			data.noise = true
+			data.last = npc.FrameCount
+			sprite:Play("Idle", true)
+		end
 	
 	elseif data.state == "findbody" then
 		if sprite:IsPlaying("ApproachBody") then
@@ -562,8 +582,9 @@ function mod:CadavrasNibsBodyAI(npc)
 	elseif data.state == "Attack1" then
 	if sprite:IsPlaying("Nibs_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
-		sound:Play(SoundEffect.SOUND_BOSS_SPIT_BLOB_BARF,1,0,false,1)
-		mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
+		
+		--ADD CADAVRA'S CIRCLE ATTACK HERE--
+		--mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
 		end
 	elseif sprite:IsFinished("Nibs_Shoot") then
 		data.state = "Walk"
