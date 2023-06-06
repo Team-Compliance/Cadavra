@@ -73,20 +73,25 @@ function mod:CadavraAI(npc)
 		
 		if sprite:IsPlaying("Idle") then
 			--npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Resized(3)
-			if data.last + 23 < npc.FrameCount and (#Bodycount > 0 or #Bodycount2 > 0) then
-				if #Bodycount > 0 and #Bodycount2 < 1 then
-				data.Choose = 1
-				elseif #Bodycount2 > 0 and #Bodycount < 1 then
-				data.Choose = 2
-				end
-			data.last = npc.FrameCount
-			sprite:Play("ApproachBody", true)
-			data.state = "findbody"
+			if (#Bodycount > 0 or #Bodycount2 > 0) then
+				if data.last + 23 < npc.FrameCount then
+					if #Bodycount > 0 and #Bodycount2 < 1 then
+					data.Choose = 1
+					elseif #Bodycount2 > 0 and #Bodycount < 1 then
+					data.Choose = 2
+					end
+				data.last = npc.FrameCount
+				sprite:Play("ApproachBody", true)
+				data.state = "findbody"
 			else
+				npc.Pathfinder:MoveRandomlyBoss(true)
+			end
+		else
 				npc.Pathfinder:MoveRandomlyBoss(true)
 				if rng:RandomInt(30) == rng:RandomInt(30) then
 					sprite:Play("Head_Shoot_Big", true)
 				end
+			
 			end
 			
 		end
