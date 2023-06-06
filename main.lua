@@ -812,6 +812,7 @@ if StageAPI and StageAPI.Loaded then
 			Portrait = "gfx/ui/boss/portrait_cadavra.png",
 			Bossname = "gfx/ui/boss/bossname_cadavra.png",
 			Weight = 2,
+			Offset = Vector(0, -13),
 			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
 		})
 	}
