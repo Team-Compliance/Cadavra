@@ -37,6 +37,7 @@ function mod:CadavraAI(npc)
 	local data = npc:GetData()
 	local rng = npc:GetDropRNG()
 	
+	
 	data.clusterParams = ProjectileParams()
 	data.clusterParams.FallingAccelModifier = -0.1
 	data.ColorWigglyMaggot = Color(1,1,1,1,0,0,0)
@@ -64,7 +65,7 @@ function mod:CadavraAI(npc)
     
     -- Appear --
 	
-   if data.state == "Normal" then
+    if data.state == "Normal" then
         if sprite:IsFinished("Appear") then
             data.noise = true
 			data.last = npc.FrameCount
@@ -107,6 +108,7 @@ function mod:CadavraAI(npc)
 			data.last = npc.FrameCount
 			sprite:Play("Idle", true)
 		end
+		
 	
 	elseif data.state == "findbody" then
 		if sprite:IsPlaying("ApproachBody") then
@@ -262,6 +264,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.direction = false
 		data.repeatjump = 0
 		data.Attacked = 0
+		data.Bounce = 4
 	end
 	
 	local Flycount = Isaac.FindByType(18, 0, -1, false, false)
@@ -292,6 +295,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		sprite:Play("Chubs_Enter", true)
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 		data.last = 0
+		data.bounce = 0
 		data.Doactivate = false
 	end
 
@@ -326,6 +330,7 @@ function mod:CadavrasChubsBodyAI(npc)
 				npc.Velocity = Vector.Zero
 				data.state = "Attack2"
 				data.direction = false
+				data.bounce = 4
 				data.Attacked = data.Attacked + 1
 		elseif #Bodycount2 == 1 then
 			if (data.Attacked > 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked >= 5 then
@@ -373,6 +378,7 @@ function mod:CadavrasChubsBodyAI(npc)
 	elseif data.state == "Attack2" then
 		sprite.FlipX = false
 			if data.direction == false then
+			
 			npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
 			sound:Play(SoundEffect.SOUND_BOSS_LITE_ROAR, 1, 0, false, 1)	
 			local angle = (player.Position - npc.Position):GetAngleDegrees()
@@ -401,8 +407,8 @@ function mod:CadavrasChubsBodyAI(npc)
 					params.FallingAccelModifier = 0.3
 					npc:FireProjectiles(npc.Position, Vector.FromAngle(angle+(rng:RandomInt(359)+1)):Resized((rng:RandomInt(3) + 4)), 0, params)
 			end
-			for i = 1,8 do
-			local vector = Vector(math.cos(i*math.pi/4),math.sin(i*math.pi/4)):Resized(6)
+			for i = 1,data.bounce do
+			local vector = Vector(math.cos(i*math.pi/(data.bounce/2)),math.sin(i*math.pi/(data.bounce/2))):Resized(6)
 			Isaac.Spawn(EntityType.ENTITY_PROJECTILE, 0, 0,npc.Position, vector, npc)
 		end
 				npc.Velocity = Vector.Zero
@@ -411,7 +417,7 @@ function mod:CadavrasChubsBodyAI(npc)
 				if data.repeatjump <= 1 then
 					data.repeatjump = data.repeatjump + 1
 					data.direction = false
-					
+					data.bounce = data.bounce + 2
 				else
 					data.state = "Walk"
 					data.last = npc.FrameCount
@@ -586,11 +592,22 @@ function mod:CadavrasNibsBodyAI(npc)
 		
 	elseif data.state == "Attack1" then
 	if sprite:IsPlaying("Nibs_Shoot") then
+		--[[if sprite:IsEventTriggered("Shoot") then
+		sound:Play(SoundEffect.SOUND_BOSS_SPIT_BLOB_BARF,1,0,false,1)
+		mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
+		end]]
 		if sprite:IsEventTriggered("Shoot") then
-		
-		--ADD CADAVRA'S CIRCLE ATTACK HERE--
-		--mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
-		end
+		local Spread = ProjectileParams()
+		Spread.FallingAccelModifier = -0.1
+		Spread.Scale = 1
+		--[[if math.random(1,2) == 1 then
+		Spread.BulletFlags = ProjectileFlags.CURVE_LEFT | ProjectileFlags.BACKSPLIT
+		else
+		Spread.BulletFlags = ProjectileFlags.CURVE_RIGHT | ProjectileFlags.BACKSPLIT
+		end]]
+		Spread.Color = data.ColorWigglyMaggot
+		npc:FireProjectiles(npc.Position, Vector(5,math.random(5,8)), 9, Spread)	
+		end		
 	elseif sprite:IsFinished("Nibs_Shoot") then
 		data.state = "Walk"
 		data.last = npc.FrameCount
@@ -636,7 +653,11 @@ function mod:CadavrasNibsBodyAI(npc)
 				cordEnd2:Remove()
 				
 			else
-			npc:AddVelocity((cordEnd2.Position - npc.Position):Resized(1))
+			npc:AddVelocity((cordEnd2.Position - npc.Position):Resized(1))				
+				if npc.FrameCount % 2 == 0 then
+					Isaac.Spawn(1000, 23, 0, npc.Position, Vector(0,0), npc)
+				end
+				
 				if sprite:GetFrame() % 8 == 0 then
 				sound:Play(SoundEffect.SOUND_BLOODSHOOT, 0.6, 0, false, math.random(9,11)/10)
 				local veloc = npc.Velocity
@@ -730,7 +751,7 @@ function mod:CadavrasNibsCordAI(npc)
 	if data.Cord == nil then
 	mod:QuickCordCad(npc.Parent, npc, "Cadavra_cord_2")
 	data.Cord = 1
-	npc.Velocity = (player.Position - npc.Position):Resized(15)
+	npc.Velocity = (player.Position - npc.Position):Resized(19)
 	data.moving = 1
 	end
 	
@@ -738,6 +759,8 @@ function mod:CadavrasNibsCordAI(npc)
 	if data.moving == 0 then
 		npc.Velocity = Vector.Zero
 	end
+	
+	
 	
 	
 	if npc:CollidesWithGrid() then
@@ -816,7 +839,7 @@ if StageAPI and StageAPI.Loaded then
 			Name = "Cadavra",
 			Portrait = "gfx/ui/boss/portrait_cadavra.png",
 			Bossname = "gfx/ui/boss/bossname_cadavra.png",
-			Weight = 2,
+			Weight = 5,
 			Offset = Vector(0, -13),
 			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
 		})
