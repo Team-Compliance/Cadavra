@@ -20,7 +20,7 @@ When you die to Nibs/Chubs, the death screen should show Cadavra's bestiary icon
 
 (done) Add creep to Nibs's sliding attack. Should also be sliding sfx if feasible
 
-Particle effect or gibs when enemies are spawned from the Nibs/Chubs bodies
+(Done) Particle effect or gibs when enemies are spawned from the Nibs/Chubs bodies
 
 (Done) Give nibs a new and interesting shooting attack
 
