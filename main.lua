@@ -88,9 +88,15 @@ function mod:CadavraAI(npc)
 				npc.Pathfinder:MoveRandomlyBoss(true)
 			end
 		else
-				npc.Pathfinder:MoveRandomlyBoss(true)
-				if rng:RandomInt(30) == rng:RandomInt(30) then
-					sprite:Play("Head_Shoot_Big", true)
+				if player.Position:Distance(npc.Position) <= 50 then
+					npc.Pathfinder:EvadeTarget(player.Position)
+					npc.Velocity = npc.Velocity * 1.2
+				else
+					npc.Pathfinder:MoveRandomlyBoss(true)
+						if rng:RandomInt(30) == rng:RandomInt(30) then
+							sprite:Play("Head_Shoot_Big", true)
+						else
+						end
 				end
 			
 			end
@@ -276,10 +282,10 @@ function mod:CadavrasChubsBodyAI(npc)
 	if sprite:IsPlaying("Chubs_Body_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
 			for i = 1, 3 do
-                    local maggot = Isaac.Spawn(18, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(2, 3)), vessel):ToNPC()
+                    local maggot = Isaac.Spawn(18, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(1, 2)), vessel):ToNPC()
                     maggot.V1 = Vector(-5, 5)
                     maggot.I1 = 1
-                    maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                    --maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             end
 			
 		end	
@@ -569,7 +575,7 @@ function mod:CadavrasNibsBodyAI(npc)
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Normalized() * 0.5 * 6
 		end
 		
-		if data.last + 15 < npc.FrameCount and rng:RandomInt(15) == rng:RandomInt(15) then
+		if data.last + 15 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				data.state = "Attack1"
 				sprite:Play("Nibs_Shoot", true)
 				npc.Velocity = Vector.Zero
@@ -597,16 +603,22 @@ function mod:CadavrasNibsBodyAI(npc)
 		mod.FireClusterProjectilesCad(npc, (player.Position - npc.Position):Resized(10), 10, data.clusterParams)
 		end]]
 		if sprite:IsEventTriggered("Shoot") then
-		local Spread = ProjectileParams()
-		Spread.FallingAccelModifier = -0.1
-		Spread.Scale = 1
+		--local Spread = ProjectileParams()
+		--Spread.FallingAccelModifier = -0.1
+		--Spread.Scale = 1
+				data.Amount = math.random(3,5)
+				for i = 1,data.Amount do
+				
+				vector = Vector(math.cos(math.pi*i/(data.Amount/2)),math.sin(math.pi*i/(data.Amount/2))):Resized(7)
+				mod.FireClusterProjectilesCad(npc, vector, 3, data.clusterParams)
+				end
 		--[[if math.random(1,2) == 1 then
 		Spread.BulletFlags = ProjectileFlags.CURVE_LEFT | ProjectileFlags.BACKSPLIT
 		else
 		Spread.BulletFlags = ProjectileFlags.CURVE_RIGHT | ProjectileFlags.BACKSPLIT
 		end]]
-		Spread.Color = data.ColorWigglyMaggot
-		npc:FireProjectiles(npc.Position, Vector(5,math.random(5,8)), 9, Spread)	
+		
+		--npc:FireProjectiles(npc.Position, Vector(5,math.random(5,8)), 9, Spread)	
 		end		
 	elseif sprite:IsFinished("Nibs_Shoot") then
 		data.state = "Walk"
@@ -839,7 +851,7 @@ if StageAPI and StageAPI.Loaded then
 			Name = "Cadavra",
 			Portrait = "gfx/ui/boss/portrait_cadavra.png",
 			Bossname = "gfx/ui/boss/bossname_cadavra.png",
-			Weight = 2,
+			Weight = 5,
 			Offset = Vector(0, -13),
 			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
 		})
