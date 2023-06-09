@@ -281,16 +281,17 @@ function mod:CadavrasChubsBodyAI(npc)
 	end
 	if sprite:IsPlaying("Chubs_Body_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
+			local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT , 140, 0, npc.Position, Vector(0,0), npc):ToEffect()
 			for i = 1, 3 do
                     local maggot = Isaac.Spawn(18, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(1, 2)), vessel):ToNPC()
                     maggot.V1 = Vector(-5, 5)
                     maggot.I1 = 1
-                    --maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                    maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             end
 			
 		end	
 	elseif sprite:IsFinished("Chubs_Body_Shoot") then
-			print("Finished animation")
+			
 			sprite:Play("Chubs_Body", true)
 			data.last = npc.FrameCount
 	end
@@ -524,12 +525,13 @@ function mod:CadavrasNibsBodyAI(npc)
 	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
 	local Wormcount = Isaac.FindByType(853, 0, -1, false, false)
 	if sprite:IsPlaying("Nibs_Body") then
-		if #Head > 0 and #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
+		if --[[#Head > 0 and]] #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Nibs_Body_Shoot", true)
 		end
 	end
 	if sprite:IsPlaying("Nibs_Body_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
+			local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT , 140, 0, npc.Position, Vector(0,0), npc):ToEffect()
 			data.Maggots = 0
 			for i = 1, 3 do
                     local maggot = Isaac.Spawn(EntityType.ENTITY_SMALL_MAGGOT, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(2, 3)), vessel):ToNPC()
@@ -851,7 +853,7 @@ if StageAPI and StageAPI.Loaded then
 			Name = "Cadavra",
 			Portrait = "gfx/ui/boss/portrait_cadavra.png",
 			Bossname = "gfx/ui/boss/bossname_cadavra.png",
-			Weight = 5,
+			Weight = 2,
 			Offset = Vector(0, -13),
 			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
 		})
