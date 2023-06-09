@@ -22,4 +22,5 @@ When you die to Nibs/Chubs, the death screen should show Cadavra's bestiary icon
 
 Particle effect or gibs when enemies are spawned from the Nibs/Chubs bodies
 
+(Done) Give nibs a new and interesting shooting attack
 
