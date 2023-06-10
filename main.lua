@@ -159,6 +159,7 @@ function mod:CadavraAI(npc)
 					npc.Velocity = Vector.Zero
 					sprite:Play("Idle", true)
 					data.state = "insidebody"
+					npc.CanShutDoors = false
 					return
 				else
 					body.Parent = npc
@@ -173,7 +174,7 @@ function mod:CadavraAI(npc)
 					npc.Velocity = Vector.Zero
 					sprite:Play("Idle", true)
 					data.state = "insidebody"
-	
+					npc.CanShutDoors = false
 					return
 				else
 					body.Parent = npc
@@ -202,7 +203,7 @@ function mod:CadavraAI(npc)
 		end
 		
 	elseif data.state == "Escape" then
-		
+		npc.CanShutDoors = true
 		if data.damaged == false then
 			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.75)
 			data.damaged = true
@@ -212,6 +213,7 @@ function mod:CadavraAI(npc)
 		npc.Velocity = RandomVector()*1
 		npc.Position = data.Pos1
 		if sprite:IsPlaying("BodyDestroyed") then
+		
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 		npc.Visible = true
 		elseif sprite:IsFinished("BodyDestroyed") then
@@ -226,7 +228,7 @@ function mod:CadavraAI(npc)
 		data.state = "Normal"
 		end
 	elseif data.state == "Abandon" then
-	
+		npc.CanShutDoors = true
 		if data.Choose == 1 then
 				data.Choose = 2
 				
@@ -260,6 +262,7 @@ function mod:CadavrasChubsBodyAI(npc)
 	local Head = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CADAVRA_HEAD, -1, false, false)
 	
 	if not data.init then
+		npc.CanShutDoors = false
 		npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 		npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 		data.state = "nohost"
@@ -281,22 +284,22 @@ function mod:CadavrasChubsBodyAI(npc)
 	end
 	if sprite:IsPlaying("Chubs_Body_Shoot") then
 		if sprite:IsEventTriggered("Shoot") then
-			local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT , 140, 0, npc.Position, Vector(0,0), npc):ToEffect()
 			for i = 1, 3 do
                     local maggot = Isaac.Spawn(18, 0, 0, npc.Position, Vector.FromAngle(math.random(0, 360)):Normalized() * (math.random(1, 2)), vessel):ToNPC()
                     maggot.V1 = Vector(-5, 5)
                     maggot.I1 = 1
-                    maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                    --maggot:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             end
 			
 		end	
 	elseif sprite:IsFinished("Chubs_Body_Shoot") then
-			
+			print("Finished animation")
 			sprite:Play("Chubs_Body", true)
 			data.last = npc.FrameCount
 	end
 	
 	if data.Doactivate then
+		npc.CanShutDoors = true
 		data.Activated = true
 		data.Attacked = 0
 		sprite:Play("Chubs_Enter", true)
@@ -455,6 +458,7 @@ function mod:CadavrasChubsBodyAI(npc)
 			    tear:GetData().cadGasLife = 325/2
 		end
 		elseif sprite:IsFinished("Chubs_Abandon") then
+		npc.CanShutDoors = false
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
 		entityData.damaged = false
@@ -548,6 +552,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	end
 	
 	if data.Doactivate then
+		npc.CanShutDoors = true
 		data.Activated = true
 		data.Attacked = 0
 		sprite:Play("Nibs_Enter", true)
@@ -582,7 +587,7 @@ function mod:CadavrasNibsBodyAI(npc)
 				sprite:Play("Nibs_Shoot", true)
 				npc.Velocity = Vector.Zero
 				data.Attacked = data.Attacked + 1
-		elseif data.last + 20 < npc.FrameCount and rng:RandomInt(15) == rng:RandomInt(15) then
+		elseif data.last + 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				data.state = "Cord"
 				data.Startmovinge = 0
 				data.Attacked = data.Attacked + 1
@@ -716,6 +721,7 @@ function mod:CadavrasNibsBodyAI(npc)
 		end
 		if sprite:GetFrame() == 31 then
 		local entityData = npc.Parent:GetData()
+		npc.CanShutDoors = false
 		entityData.state = "Abandon" 
 		entityData.damaged = false
 		entityData.Choose = 2
