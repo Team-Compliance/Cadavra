@@ -525,7 +525,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
 	local Wormcount = Isaac.FindByType(853, 0, -1, false, false)
 	if sprite:IsPlaying("Nibs_Body") then
-		if --[[#Head > 0 and]] #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
+		if #Head > 0 and #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Nibs_Body_Shoot", true)
 		end
 	end
