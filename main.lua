@@ -159,7 +159,7 @@ function mod:CadavraAI(npc)
 					npc.Velocity = Vector.Zero
 					sprite:Play("Idle", true)
 					data.state = "insidebody"
-					npc.CanShutDoors = false
+				
 					return
 				else
 					body.Parent = npc
@@ -174,7 +174,7 @@ function mod:CadavraAI(npc)
 					npc.Velocity = Vector.Zero
 					sprite:Play("Idle", true)
 					data.state = "insidebody"
-					npc.CanShutDoors = false
+					
 					return
 				else
 					body.Parent = npc
@@ -458,7 +458,6 @@ function mod:CadavrasChubsBodyAI(npc)
 			    tear:GetData().cadGasLife = 325/2
 		end
 		elseif sprite:IsFinished("Chubs_Abandon") then
-		npc.CanShutDoors = false
 		local entityData = npc.Parent:GetData()
 		entityData.state = "Abandon" 
 		entityData.damaged = false
@@ -467,6 +466,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		entityData.Pos1 = npc.Position
 		sprite:Play("Chubs_Body", true)
 		data.Activated = false
+		npc.CanShutDoors = false
 		end
 	end 
 	
@@ -721,7 +721,6 @@ function mod:CadavrasNibsBodyAI(npc)
 		end
 		if sprite:GetFrame() == 31 then
 		local entityData = npc.Parent:GetData()
-		npc.CanShutDoors = false
 		entityData.state = "Abandon" 
 		entityData.damaged = false
 		entityData.Choose = 2
@@ -729,6 +728,7 @@ function mod:CadavrasNibsBodyAI(npc)
 		entityData.Pos1 = npc.Position
 		sprite:Play("Nibs_Body", true)
 		data.Activated = false
+		npc.CanShutDoors = false
 		end
 	end 
 	
