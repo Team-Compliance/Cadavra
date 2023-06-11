@@ -699,7 +699,7 @@ function mod:CadavrasNibsBodyAI(npc)
 					break
 				end
 			end
-			if cordEnd2.Position:Distance(npc.Position) <= 20 then
+			if cordEnd2.Position:Distance(npc.Position) <= 20 or npc:CollidesWithGrid() then
 				sprite:Play("Nibs_CordEnd", true)
 				sound:Play(SoundEffect.SOUND_BLOODSHOOT, 0.6, 0, false, math.random(9,11)/10)
 				npc.Velocity = Vector.Zero
