@@ -157,6 +157,7 @@ function mod:CadavraAI(npc)
 			local Bodydata, bodysprite = data.Startefusionbody:GetData(), data.Startefusionbody:GetSprite()
 				if bodysprite:IsPlaying("Chubs_Enter") then
 					npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+					Bodydata.state = "Activating"
 					data.last = npc.FrameCount
 					npc.Velocity = Vector.Zero
 					sprite:Play("Idle", true)
@@ -171,6 +172,7 @@ function mod:CadavraAI(npc)
 				data.Startefusionbody = body
 			local Bodydata, bodysprite = data.Startefusionbody:GetData(), data.Startefusionbody:GetSprite()
 				if bodysprite:IsPlaying("Nibs_Enter") then
+					Bodydata.state = "Activating"
 					npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 					data.last = npc.FrameCount
 					npc.Velocity = Vector.Zero
@@ -194,6 +196,7 @@ function mod:CadavraAI(npc)
 		end
 		
 		end
+	
 	
 	
 	elseif data.state == "insidebody" then
