@@ -373,7 +373,7 @@ function mod:CadavrasChubsBodyAI(npc)
 					params.Variant = 0
 					params.FallingSpeedModifier = -(rng:RandomInt(27) + 8) * 0.4
 					params.FallingAccelModifier = 0.3
-					npc:FireProjectiles(npc.Position, Vector.FromAngle(angle+(rng:RandomInt(359)+1)):Resized((rng:RandomInt(3) + 4)), 0, params)
+					npc:FireProjectiles(npc.Position + Vector(rng:RandomInt(10) - 10,rng:RandomInt(10) - 10), Vector.FromAngle(angle+(rng:RandomInt(359)+1)):Resized((rng:RandomInt(3) + 4)), 0, params)
 				end
 				for i = 1, 6 do
 					local direction = (i*(360/6)) + (rng:RandomInt(20) - 10)
@@ -381,6 +381,17 @@ function mod:CadavrasChubsBodyAI(npc)
 					wave.Parent = npc
 					wave.Rotation = direction
 				end
+				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
+				local entityData = entity:GetData()
+				local nibssprite = entity:GetSprite()
+					if entity:Exists() then
+						nibssprite:Play("Nibs_Body_Jump", true)
+						break
+					end
+				end
+				
+				--local nibs = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
+				--nibs:GetSprite():Play("Nibs_Body_Jump", true)
 			end
 		elseif sprite:IsFinished("Chubs_Jump_Big") then
 		data.state = "Walk"
@@ -534,6 +545,7 @@ function mod:CadavrasNibsBodyAI(npc)
 	local Bodycount = Isaac.FindByType(EntityType.ENTITY_CADAVRA, CHUBS, -1, false, false)
 	local Wormcount = Isaac.FindByType(853, 0, -1, false, false)
 	if sprite:IsPlaying("Nibs_Body") then
+		data.nohit = 0
 		if #Head > 0 and #Wormcount == 0 and data.last + 23 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then 
 		sprite:Play("Nibs_Body_Shoot", true)
 		end
@@ -554,6 +566,19 @@ function mod:CadavrasNibsBodyAI(npc)
 			-- print("Finished animation")
 			sprite:Play("Nibs_Body", true)
 			data.last = npc.FrameCount
+	end
+	
+	if sprite:IsPlaying("Nibs_Body_Jump") then
+		if data.nohit == 0 then
+		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+		data.nohit = 1
+		end
+		if sprite:IsEventTriggered("Shoot") then
+			npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+		end
+	elseif sprite:IsFinished("Nibs_Body_Jump") then
+		sprite:Play("Nibs_Body", true)
+		data.last = npc.FrameCount
 	end
 	
 	if data.Doactivate then
@@ -757,6 +782,7 @@ function mod:CadavrasNibsCordAI(npc)
 	if npc.Variant ~= CORD then
 		return
 	end
+	npc.Visible = false
 	npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
 	npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
 	local room = game:GetRoom()
