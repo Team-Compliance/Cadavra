@@ -14,7 +14,7 @@ Cadavra's finaly in repentance, After having to wait so long, and hearing no new
 
 (Done) Fix the HP bar not working when Cadavra is in Nibs or Chubs
 
-When you die to Nibs/Chubs, the death screen should show Cadavra's bestiary icon
+(Done) When you die to Nibs/Chubs, the death screen should show Cadavra's bestiary icon
 
 (done) Fix Cadavra's boss portrait appearing too low
 
