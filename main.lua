@@ -393,7 +393,7 @@ function mod:CadavrasChubsBodyAI(npc)
 				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
 				local entityData = entity:GetData()
 				local nibssprite = entity:GetSprite()
-					if entity:Exists() and (not nibssprite:IsPlaying("Nibs_Enter")) and (entityData.Activated == false) then
+					if entity:Exists() and (not nibssprite:IsPlaying("Nibs_Enter")) then
 						nibssprite:Play("Nibs_Body_Jump", true)
 						break
 					end
