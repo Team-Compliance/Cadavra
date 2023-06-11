@@ -56,7 +56,7 @@ function mod:CadavraAI(npc)
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 		data.Attacked = 0
 		data.Pos1 = npc.Position
-		data.Choose = 1
+		data.Choose = rng:RandomInt(1) + 1
 		data.Cord = 0
         data.init = true
 		sprite:Play("Appear", true)
@@ -273,6 +273,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.last = 0
 		data.GridCountdown = 0
 		data.direction = false
+		npc.CollisionDamage = 0
 		data.repeatjump = 0
 		data.Attacked = 0
 		data.Bounce = 4
@@ -309,6 +310,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		data.last = 0
 		data.bounce = 0
 		data.Doactivate = false
+		npc.CollisionDamage = 2
 	end
 
 	if data.Activated then
@@ -318,6 +320,10 @@ function mod:CadavrasChubsBodyAI(npc)
 	end
 	local Bodycount2 = Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)
 	if data.state == "Walk" then
+		if player.Position:Distance(npc.Position) <= 10 then
+			sprite:Play("Chubs_Idle", false)
+			npc.Velocity = npc.Velocity * 0.08
+		else
 		npc:AnimWalkFrame("Chubs_WalkHori", "Chubs_WalkVert", 0.3)
 		
 		
@@ -331,7 +337,7 @@ function mod:CadavrasChubsBodyAI(npc)
 		else 
 			npc.Velocity = npc.Velocity * 0.05 + (player.Position - npc.Position):Normalized() * 0.3 * 6
 		end
-		
+		end
 		if data.last + 20 < npc.FrameCount and rng:RandomInt(30) == rng:RandomInt(30) then
 				data.state = "Attack1"
 				sprite:Play("Chubs_Jump_Big", true)
@@ -359,7 +365,7 @@ function mod:CadavrasChubsBodyAI(npc)
 			if sprite:IsEventTriggered("Jump") then
 			npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 			npc.GridCollisionClass = GridCollisionClass.COLLISION_PIT
-			npc.Velocity = (player.Position-npc.Position)*0.056
+			npc.Velocity = ((player.Position + ((player.Velocity):Normalized() * 100))-npc.Position)*0.056
 			sound:Play(SoundEffect.SOUND_BOSS_LITE_ROAR, 1, 0, false, 1)
 			elseif sprite:IsEventTriggered("Shoot") then
 				game:MakeShockwave(npc.Position, 0.045, 0.035, 10)
@@ -384,7 +390,7 @@ function mod:CadavrasChubsBodyAI(npc)
 				for i,entity in ipairs(Isaac.FindByType(EntityType.ENTITY_CADAVRA, NIBS, -1, false, false)) do
 				local entityData = entity:GetData()
 				local nibssprite = entity:GetSprite()
-					if entity:Exists() then
+					if entity:Exists() and (not nibssprite:IsPlaying("Nibs_Enter")) and (entityData.Activated == false) then
 						nibssprite:Play("Nibs_Body_Jump", true)
 						break
 					end
@@ -479,6 +485,7 @@ function mod:CadavrasChubsBodyAI(npc)
 			entityData.damaged = false
 			entityData.Choose = 1
 			data.state = "nohost"
+			npc.CollisionDamage = 0
 			entityData.Pos1 = npc.Position
 			sprite:Play("Chubs_Body", true)
 			data.Activated = false
@@ -536,6 +543,7 @@ function mod:CadavrasNibsBodyAI(npc)
 		data.last = npc.FrameCount
 		sprite:Play("Nibs_Body", true)
 		data.Startmovinge = 0
+		npc.CollisionDamage = 0
 		data.Cord = 0
 		data.Attacked = 0
 		data.init = true
@@ -585,6 +593,7 @@ function mod:CadavrasNibsBodyAI(npc)
 		npc.CanShutDoors = true
 		data.Activated = true
 		data.Attacked = 0
+		npc.CollisionDamage = 2
 		sprite:Play("Nibs_Enter", true)
 		npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 		data.Doactivate = false
@@ -597,7 +606,10 @@ function mod:CadavrasNibsBodyAI(npc)
 	end
 	
 	if data.state == "Walk" then
-		
+		if player.Position:Distance(npc.Position) <= 10 then
+			sprite:Play("Nibs_Idle", false)
+			npc.Velocity = npc.Velocity * 0.08
+		else
 		npc:AnimWalkFrame("Nibs_WalkHori", "Nibs_WalkVert", 0.1)
 		
 		
@@ -624,12 +636,13 @@ function mod:CadavrasNibsBodyAI(npc)
 				sprite:Play("Nibs_Cord", true)
 				npc.Velocity = Vector.Zero
 		elseif #Bodycount == 1 then
-			if (data.Attacked > 0 and data.last + 40 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked >= 5 then
+			if (data.Attacked > 0 and  data.last + 40 < npc.FrameCount and rng:RandomInt(50) == rng:RandomInt(50)) or data.Attacked >= 5 then
 				sprite:Play("Nibs_Abandon", true)
 				npc.Velocity = Vector.Zero
 				data.state = "Abandon"
 			end
 		end
+	end
 		
 		
 		
@@ -752,6 +765,7 @@ function mod:CadavrasNibsBodyAI(npc)
 				data.state = "nohost"
 				entityData.Pos1 = npc.Position
 				sprite:Play("Nibs_Body", true)
+				npc.CollisionDamage = 0
 				data.Activated = false
 				npc.CanShutDoors = false
 			end
@@ -1022,3 +1036,4 @@ function mod.FireClusterProjectilesCad(npc, velocity, numProjectiles, params)
 	corpseClusterParentCad:GetData().corpseClusters = projectiles
 	return projectiles, corpseClusterParentCad
 end
+
