@@ -9,7 +9,7 @@
     <entity anm2path="bosses\922.000_cadavra.anm2" baseHP="360" boss="1" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="30" collisionRadius="16" friction="1" gridCollision="ground" id="922" name="Nibs (Cadavra)" numGridCollisionPoints="12" shadowSize="20" stageHP="0" variant="2" portrait="2" tags="nodelirium">
         <gibs amount="7" blood="1" bone="0" eye="1" gut="1" large="0" />
     </entity>
-    <entity anm2path="bosses\922.010_cadavra cord.anm2" baseHP="130" boss="1" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="75" collisionRadius="5" friction="1" gridCollision="walls" id="922" name="Cadavra (Cord)" numGridCollisionPoints="4" shadowSize="10" stageHP="0" variant="10" portrait="22" tags="nodelirium">
+    <entity anm2path="bosses\922.010_cadavra cord.anm2" baseHP="0" boss="0" bossID="103" champion="0" collisionDamage="2" shutdoors="false" collisionMass="75" collisionRadius="5" friction="1" gridCollision="walls" id="922" name="Cadavra (Cord)" numGridCollisionPoints="4" shadowSize="10" stageHP="0" variant="10" portrait="22" tags="nodelirium">
         <gibs amount="2" blood="1" bone="1" eye="0" gut="1" large="0" />
     </entity>
 	<entity anm2path="bosses\effect_ERROR.anm2" name="Dummy Effect (Cadavra)" id="1000" variant="451" subtype="10" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="12" friction="1" numGridCollisionPoints="0" shadowSize="0">
