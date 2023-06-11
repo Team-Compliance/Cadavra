@@ -205,7 +205,7 @@ function mod:CadavraAI(npc)
 	elseif data.state == "Escape" then
 		npc.CanShutDoors = true
 		if data.damaged == false then
-			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.75)
+			npc.HitPoints = npc.HitPoints - (npc.HitPoints * 0.50)
 			data.damaged = true
 		end
 		data.Cord = 0
