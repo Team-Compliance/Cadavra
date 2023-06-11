@@ -677,7 +677,7 @@ function mod:CadavrasNibsBodyAI(npc)
 					Isaac.Spawn(1000, 23, 0, npc.Position, Vector(0,0), npc)
 				end
 				
-				if sprite:GetFrame() % 8 == 0 then
+				if sprite:GetFrame() % 6 == 0 then
 				sound:Play(SoundEffect.SOUND_BLOODSHOOT, 0.6, 0, false, math.random(9,11)/10)
 				local veloc = npc.Velocity
 				data.tearColor2 = Color(1,1,1,1)
