@@ -904,6 +904,7 @@ if StageAPI and StageAPI.Loaded then
 			Weight = 2,
 			Offset = Vector(0, -13),
 			Rooms = StageAPI.RoomsList("Cadavra Rooms", require("resources.luarooms.boss_cadavra")),
+			Entity = {Type = EntityType.ENTITY_CADAVRA, Variant = CADAVRA_HEAD},
 		})
 	}
 	
