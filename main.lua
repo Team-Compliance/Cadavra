@@ -912,6 +912,18 @@ if StageAPI and StageAPI.Loaded then
 	}
 	
 	StageAPI.AddBossToBaseFloorPool({BossID = "Cadavra"}, LevelStage.STAGE4_1, StageType.STAGETYPE_REPENTANCE)
+elseif REPENTOGON then
+	mod:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, function(_, levelGeneratorRoom, roomConfigRoom, seed)
+		local level = Game():GetLevel()
+		if roomConfigRoom.Type == RoomType.ROOM_BOSS and level:GetAbsoluteStage() == LevelStage.STAGE4_1 and
+		level:GetStageType() == StageType.STAGETYPE_REPENTANCE and roomConfigRoom.Variant ~= 6000 then
+			rng:SetSeed(math.min(1, seed), 35)
+			if rng:RandomFloat() >= 0.75 then
+				local newRoomConfigRoom = RoomConfigHolder.GetRandomRoom(seed, false, StbType.CORPSE, RoomType.ROOM_BOSS, roomConfigRoom.Shape, 6050, 6054, 0, 10, levelGeneratorRoom:DoorMask())
+				return newRoomConfigRoom
+			end
+		end
+	end)
 end
 
 
